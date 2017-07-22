@@ -1,4 +1,4 @@
-Django >= 1.8.1,<1.9
+Django >= 1.8.1,<1.10
 kobo>=0.4.3
 # requires: openldap-devel
 python-ldap
