@@ -3,6 +3,8 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
+import re
+
 from django.contrib.auth import models
 from django.core.exceptions import FieldError
 
@@ -14,6 +16,8 @@ from pdc.apps.auth.models import (
     ResourcePermission,
     GroupResourcePermission,
     ResourceApiUrl)
+
+RE_RESOURCE_KEY_PLACEHOLDER = re.compile('{.*?}')
 
 
 class PermissionSerializer(StrictSerializerMixin, serializers.ModelSerializer):
@@ -127,7 +131,16 @@ class ResourceApiUrlSerializer(StrictSerializerMixin, serializers.ModelSerialize
             resource_name = self.instance.resource.name
 
         try:
-            resource = Resource.objects.get(name=resource_name)
+            components = RE_RESOURCE_KEY_PLACEHOLDER.split(resource_name)
+            if len(components) > 1:
+                prefix = components[0] + '('
+                results = Resource.objects.filter(name__startswith=prefix)
+                for substr in components[1:-1]:
+                    results = results.filter(name__contains=')' + substr + '(')
+                suffix = ')' + components[-1]
+                resource = results.get(name__endswith=suffix)
+            else:
+                resource = Resource.objects.get(name=resource_name)
         except Resource.DoesNotExist:
             raise serializers.ValidationError("Can't find resource %s." % resource_name)
 

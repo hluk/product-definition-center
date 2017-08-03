@@ -3,12 +3,16 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
+import re
+
 from django.contrib.auth import models
 
 import django_filters
 
 from pdc.apps.common.filters import MultiValueFilter
 from .models import GroupResourcePermission, ResourcePermission, ResourceApiUrl
+
+RE_RESOURCE_KEY_PLACEHOLDER = re.compile('{.*?}')
 
 
 class PermissionFilter(django_filters.FilterSet):
@@ -57,8 +61,25 @@ class ResourcePermissionFilter(django_filters.FilterSet):
         fields = ('resource', 'permission')
 
 
+class ResourceFilter(MultiValueFilter):
+    def filter(self, qs, value):
+        for resource_name in value:
+            components = RE_RESOURCE_KEY_PLACEHOLDER.split(resource_name)
+            if len(components) > 1:
+                prefix = components[0] + '('
+                qs = qs.filter(**{self.name + '__startswith': prefix})
+                for substr in components[1:-1]:
+                    substr = ')' + substr + '('
+                    qs = qs.filter(**{self.name + '__contains': substr})
+                suffix = ')' + components[-1]
+                qs = qs.filter(**{self.name + '__endswith': suffix})
+            else:
+                qs = super(ResourceFilter, self).filter(qs, value)
+        return qs
+
+
 class ResourceApiUrlFilter(django_filters.FilterSet):
-    resource = MultiValueFilter(name='resource__name')
+    resource = ResourceFilter(name='resource__name')
     url = MultiValueFilter()
 
     class Meta:
