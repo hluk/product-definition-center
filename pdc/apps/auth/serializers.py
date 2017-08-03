@@ -17,8 +17,6 @@ from pdc.apps.auth.models import (
     GroupResourcePermission,
     ResourceApiUrl)
 
-RE_RESOURCE_KEY_PLACEHOLDER = re.compile('{.*?}')
-
 
 class PermissionSerializer(StrictSerializerMixin, serializers.ModelSerializer):
     app_label = serializers.CharField(source='content_type.app_label')
@@ -131,14 +129,9 @@ class ResourceApiUrlSerializer(StrictSerializerMixin, serializers.ModelSerialize
             resource_name = self.instance.resource.name
 
         try:
-            components = RE_RESOURCE_KEY_PLACEHOLDER.split(resource_name)
-            if len(components) > 1:
-                prefix = components[0] + '('
-                results = Resource.objects.filter(name__startswith=prefix)
-                for substr in components[1:-1]:
-                    results = results.filter(name__contains=')' + substr + '(')
-                suffix = ')' + components[-1]
-                resource = results.get(name__endswith=suffix)
+            regex = re.sub(r'{.*?}', r'(.*?)', resource_name)
+            if regex != resource_name:
+                resource = Resource.objects.get(name__regex=regex)
             else:
                 resource = Resource.objects.get(name=resource_name)
         except Resource.DoesNotExist:

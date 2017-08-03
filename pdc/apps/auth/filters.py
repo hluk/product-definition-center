@@ -12,8 +12,6 @@ import django_filters
 from pdc.apps.common.filters import MultiValueFilter
 from .models import GroupResourcePermission, ResourcePermission, ResourceApiUrl
 
-RE_RESOURCE_KEY_PLACEHOLDER = re.compile('{.*?}')
-
 
 class PermissionFilter(django_filters.FilterSet):
     codename        = MultiValueFilter()
@@ -64,15 +62,9 @@ class ResourcePermissionFilter(django_filters.FilterSet):
 class ResourceFilter(MultiValueFilter):
     def filter(self, qs, value):
         for resource_name in value:
-            components = RE_RESOURCE_KEY_PLACEHOLDER.split(resource_name)
-            if len(components) > 1:
-                prefix = components[0] + '('
-                qs = qs.filter(**{self.name + '__startswith': prefix})
-                for substr in components[1:-1]:
-                    substr = ')' + substr + '('
-                    qs = qs.filter(**{self.name + '__contains': substr})
-                suffix = ')' + components[-1]
-                qs = qs.filter(**{self.name + '__endswith': suffix})
+            regex = re.sub(r'{.*?}', r'(.*?)', resource_name)
+            if regex != resource_name:
+                qs = qs.filter(**{self.name + '__regex': regex})
             else:
                 qs = super(ResourceFilter, self).filter(qs, value)
         return qs
