@@ -4,6 +4,8 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
+import inspect
+
 from django.contrib.auth.models import PermissionsMixin, UserManager, AbstractBaseUser
 from django.db import models
 from django.core import validators
@@ -11,7 +13,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib.auth.models import Group
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 
+from pdc.apps.utils.utils import convert_method_to_action
+from pdc.apps.utils.SortedRouter import router
+
+
+API_WITH_NO_PERMISSION_CONTROL = set(['auth/token', 'auth/current-user'])
 
 MAX_LENGTH = 255
 
@@ -174,3 +183,29 @@ class ResourceApiUrl(models.Model):
             "resource": self.resource.name,
             "url": self.url,
         }
+
+
+@receiver(post_migrate)
+def collect_resource_permissions_when_post_migrate(sender, **kwargs):
+    action_to_obj_dict = {}
+
+    verbosity = kwargs['verbosity']
+    if verbosity > 0:
+        print('Updating Resource data for ' + sender.label)
+
+    for action in ('update', 'create', 'delete', 'read'):
+        action_to_obj_dict[action] = ActionPermission.objects.get(name=action)
+
+    for prefix, view_set, basename in router.registry:
+        if prefix in self.API_WITH_NO_PERMISSION_CONTROL:
+            continue
+        if verbosity > 1:
+            print('  Adding Resource ' + prefix)
+        resource_obj, created = Resource.objects.get_or_create(name=prefix, view=str(view_set))
+        for name, method in inspect.getmembers(view_set, predicate=inspect.ismethod):
+            if name.lower() in ['update', 'create', 'destroy', 'list', 'partial_update', 'retrieve']:
+                if verbosity > 2:
+                    print('    Adding Resource permission ' + name)
+                action_permission = action_to_obj_dict[convert_method_to_action(name.lower())]
+                _, created = ResourcePermission.objects.get_or_create(
+                    resource=resource_obj, permission=action_permission)
