@@ -23,40 +23,43 @@ class APIPermissionComponent(BasePermissionComponent):
         return self._has_permission(internal_permission, request.user, str(view.__class__), api_name)
 
     def _has_permission(self, internal_permission, user, view, api_name):
-        resources = Resource.objects.filter(view=view).all()
-        resource = None
+        resource = self._find_resource(view, api_name)
 
-        if len(resources) == 1:
-            resource = resources[0]
-        elif len(resources) > 1:
-            # multiple api map to one view
-            resources = [obj for obj in Resource.objects.filter(view=view, name=api_name).all()]
-            if len(resources) == 1:
-                resource = resources[0]
-            else:
-                # maybe resouce name is regexp
-                resource = self._try_regexp_resource_match(api_name, resources)
-        if not resource:
-            # not restrict access to resource that is not in permission control
-            result = True
-        else:
-            group_id_list = [group.id for group in user.groups.all()]
-            result = GroupResourcePermission.objects.filter(
-                group__id__in=group_id_list, resource_permission__resource=resource,
-                resource_permission__permission__name=internal_permission).exists()
+        if resource is None:
+            # Do not restrict access to resource that is not in permission control.
+            return True
 
+        group_id_list = [group.id for group in user.groups.all()]
+        result = GroupResourcePermission.objects.filter(
+            group__id__in=group_id_list, resource_permission__resource=resource,
+            resource_permission__permission__name=internal_permission).exists()
         return result
 
     @staticmethod
+    def _find_resource(view, api_name):
+        resources = Resource.objects.filter(view=view)
+
+        if len(resources) == 1:
+            return resources[0]
+
+        if len(resources) > 1:
+            # Multiple APIs map to single view.
+            resources2 = resources.filter(name=api_name)
+            if len(resources2) == 1:
+                return resources2[0]
+
+            # Try fuzzy match resource name (i.e. resource prefix is regex).
+            return APIPermissionComponent._try_regexp_resource_match(api_name, resources)
+
+        return None
+
+    @staticmethod
     def _try_regexp_resource_match(api_name, resources):
-        result = None
-        api_str_list = api_name.split('/')
-        if len(api_str_list) > 1 and resources:
-            for resource_obj in resources:
-                if re.match(resource_obj.name, api_name):
-                    result = resource_obj
-                    break
-        return result
+        for resource_obj in resources:
+            pattern = re.sub(r'{.*?}', r'(.*?)', resource_obj.name)
+            if re.match(pattern, api_name):
+                return resource_obj
+        return None
 
     @staticmethod
     def _convert_permission(in_method):

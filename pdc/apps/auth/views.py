@@ -744,6 +744,8 @@ class ResourcePermissionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             action_to_obj_dict[action] = ActionPermission.objects.get(name=action)
 
         for prefix, view_set, basename in router.registry:
+            Resource.objects.filter(name=prefix, view=str(view_set)).delete()
+            prefix = URL_ARG_RE.sub(r'{\1}', prefix)
             if prefix in self.API_WITH_NO_PERMISSION_CONTROL:
                 continue
             resource_obj, created = Resource.objects.get_or_create(name=prefix, view=str(view_set))
