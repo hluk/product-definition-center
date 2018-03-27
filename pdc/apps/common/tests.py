@@ -514,12 +514,6 @@ class CachedByArgumentClassTestCase(TestCase):
 
 
 class FilterDocumentingTestCase(TestCase):
-    def test_filter_fields_have_no_type(self):
-        class TestViewset(object):
-            filter_fields = ('c', 'b', 'a')
-        res = get_filters(TestViewset())
-        self.assertEqual(res, ' * `a`\n * `b`\n * `c`')
-
     def test_filter_extra_query_params_have_no_type(self):
         class TestViewset(object):
             extra_query_params = ('c', 'b', 'a')

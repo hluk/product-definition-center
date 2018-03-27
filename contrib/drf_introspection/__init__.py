@@ -22,7 +22,6 @@ def get_allowed_query_params(view):
     The list of allowed parameters is obtained from multiple sources:
 
       * filter set class
-      * filter_fields attribute
       * extra_query_params attribute (which should be a list/tuple of strings)
       * paginate_by_param attribute
 
@@ -39,8 +38,6 @@ def get_allowed_query_params(view):
     if filter_class:
         filter_set = filter_class()
         allowed_keys += sorted(filter_set.filters.keys())
-    # Take filters if no filter set is used.
-    allowed_keys += _get_fields(view.__class__, 'filter_fields')
     # Take extra params specified on viewset.
     allowed_keys += _get_fields(view.__class__, 'extra_query_params')
     # Add pagination param.

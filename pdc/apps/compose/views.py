@@ -450,7 +450,7 @@ class ComposeViewSet(StrictQueryParamMixin,
     queryset = Compose.objects.all().order_by('id')
     serializer_class = ComposeSerializer
     filter_class = ComposeFilter
-    filter_fields = ('srpm_name', 'rpm_name', 'rpm_arch', 'rpm_version', 'rpm_release')
+    extra_query_params = ('srpm_name', 'rpm_name', 'rpm_arch', 'rpm_version', 'rpm_release')
     permission_classes = (APIPermission,)
     lookup_field = 'compose_id'
     lookup_value_regex = '[^/]+'

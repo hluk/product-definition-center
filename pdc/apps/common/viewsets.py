@@ -259,7 +259,6 @@ class StrictQueryParamMixin(object):
 
     The list of allowed parameters is obtained from multiple sources:
       * filter set class
-      * filter_fields attribute
       * extra_query_params attribute (which should be a list/tuple of strings)
       * paginate_by_param attribute
 
