@@ -273,6 +273,13 @@ class StrictQueryParamMixin(object):
     """
     ordering_fields = '__all__'
 
+    extra_query_params = ('ordering',)
+    doc_query_param_ordering = """
+    (string) Comma separated list of fields for ordering results.
+        - To sort by a field in descending order, prefix its name with minus (e.g. `-name`).
+        - Use double underscores for nested field names (e.g. `parent__child` for `{"parent": {"child": ...}}`).
+    """
+
     def initial(self, request, *args, **kwargs):
         super(StrictQueryParamMixin, self).initial(request, *args, **kwargs)
 
@@ -283,7 +290,7 @@ class StrictQueryParamMixin(object):
                 not hasattr(self, request.method.lower())):
             return
         allowed_keys = drf_introspection.get_allowed_query_params(self)
-        extra_keys = set(request.query_params.keys()) - allowed_keys
+        extra_keys = set(request.query_params.keys()) - set(allowed_keys)
         if extra_keys:
             raise FieldError('Unknown query params: %s.' % ', '.join(sorted(extra_keys)))
         # If 'ordering' in query parameter, check the key whether in fields.

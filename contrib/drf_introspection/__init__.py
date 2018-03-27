@@ -4,7 +4,17 @@
 # http://opensource.org/licenses/MIT
 #
 
-from .serializers import DynamicFieldsSerializerMixin
+from inspect import getmro
+
+
+def _get_fields(class_, attribute_name):
+    all_keys = set()
+    fields = []
+    for base_class in reversed(getmro(class_)):
+        keys = set(getattr(base_class, attribute_name, set())) - all_keys
+        all_keys.update(keys)
+        fields += keys
+    return reversed(fields)
 
 
 def get_allowed_query_params(view):
@@ -22,35 +32,29 @@ def get_allowed_query_params(view):
     request body fields.
     """
 
-    allowed_keys = set()
+    allowed_keys = []
 
     # Take all filters from filter set.
     filter_class = getattr(view, 'filter_class', None)
     if filter_class:
         filter_set = filter_class()
-        allowed_keys.update(filter_set.filters.keys())
+        allowed_keys += sorted(filter_set.filters.keys())
     # Take filters if no filter set is used.
-    allowed_keys.update(getattr(view.__class__, 'filter_fields', []))
+    allowed_keys += _get_fields(view.__class__, 'filter_fields')
     # Take extra params specified on viewset.
-    allowed_keys.update(getattr(view.__class__, 'extra_query_params', []))
-    # add ordering key to allowed_keys params
-    allowed_keys.update(['ordering'])
+    allowed_keys += _get_fields(view.__class__, 'extra_query_params')
     # Add pagination param.
     if hasattr(view, 'paginator'):
         page = getattr(view.paginator, 'page_query_param', None)
         if page:
-            allowed_keys.add(page)
+            allowed_keys.append(page)
         page_size = getattr(view.paginator, 'page_size_query_param', None)
         if page_size:
-            allowed_keys.add(page_size)
+            allowed_keys.append(page_size)
 
     # Add fields from serializer if specified.
     serializer_class = getattr(view, 'serializer_class', None)
     if serializer_class:
-        allowed_keys.update(getattr(serializer_class, 'query_params', set()))
-
-        # Add fields key if applicable.
-        if issubclass(serializer_class, DynamicFieldsSerializerMixin):
-            allowed_keys.add('fields')
+        allowed_keys += _get_fields(serializer_class, 'query_params')
 
     return allowed_keys

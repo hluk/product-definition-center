@@ -12,8 +12,6 @@ import inspect
 from django.conf import settings
 from django.utils.encoding import smart_text
 
-from contrib import drf_introspection
-
 from django.urls import NoReverseMatch
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.utils import formatting
@@ -48,20 +46,6 @@ the page and details about the error will be logged to the error log.
 
 
 URL_SPEC_RE = re.compile(r'\$(?P<type>URL|LINK):(?P<details>[^$]+)\$')
-ORDERING_STRING = """
- * `ordering` (string) Comma separated list of fields for ordering results.
-    - To sort by a field in descending order, prefix its name with minus (e.g. `-name`).
-    - Use double underscores for nested field names (e.g. `parent__child` for `{"parent": {"child": ...}}`).
-"""
-FIELDS_STRING = """
-
-Following filters can be used to show only specific fields. This can make
-response time faster. Format is list or single value
-(JSON: `{"fields": ["a","b"]}` or `{"fields": "a"}`, in URL: `?fields=a&fields=b`).
-
- * `fields` (list | string) Fields to display (other fields will be hidden).
- * `exclude_fields`: (list | string) Fields *NOT* to display (overrules `fields`).
-"""
 
 DEFAULT_DESCRIPTION = {
     "list": """
@@ -299,12 +283,6 @@ class ReadOnlyBrowsableAPIRenderer(BrowsableAPIRenderer):
 
         if '%(FILTERS)s' in description:
             macros['FILTERS'] = get_filters(view)
-            # If the API has the LIST method, show ordering field info.
-            if 'list' == method and getattr(view, 'serializer_class', None) is not None:
-                macros['FILTERS'] += ORDERING_STRING
-                # Show fields info if applicable.
-                if issubclass(view.serializer_class, drf_introspection.serializers.DynamicFieldsSerializerMixin):
-                    macros['FILTERS'] += FIELDS_STRING
         if '%(SERIALIZER)s' in description:
             macros['SERIALIZER'] = get_serializer(view, include_read_only=True)
         if '%(WRITABLE_SERIALIZER)s' in description:

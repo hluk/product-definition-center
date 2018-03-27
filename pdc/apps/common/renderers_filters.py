@@ -6,6 +6,7 @@
 from contrib import drf_introspection
 
 from django_filters import NumberFilter
+from rest_framework.utils import formatting
 
 LOOKUP_TYPES = {
     'icontains': 'case insensitive, substring match',
@@ -21,23 +22,27 @@ def get_filters(view):
     on serializer or query arguments used for paging.
     """
     allowed_keys = drf_introspection.get_allowed_query_params(view)
+    serializer_class = getattr(view, 'serializer_class', None)
     filter_class = getattr(view, 'filter_class', None)
     filterset = filter_class() if filter_class is not None else None
     filterset_fields = filterset.filters if filterset is not None else []
-    filter_fields = set(getattr(view, 'filter_fields', []))
-    extra_query_params = set(getattr(view, 'extra_query_params', []))
 
     filters = []
     for key in sorted(allowed_keys):
         if key in filterset_fields:
             # filter defined in FilterSet
-            filter = filterset_fields.get(key)
-            filters.append(_get_filter(key, filter))
-        elif key in filter_fields or key in extra_query_params:
-            # filter defined in viewset directly; type depends on model, not easily available
-            filters.append(' * `%s`' % key)
-        # else filter defined somewhere else and not relevant here (e.g.
-        # serializer or pagination settings).
+            filter_ = filterset_fields.get(key)
+            doc = _get_filter(key, filter_)
+            filters.append(doc)
+        else:
+            doc = ' * `%s`' % key
+            doc_attribute_name = 'doc_query_param_' + key
+            description = getattr(view, doc_attribute_name, '')
+            if not description and serializer_class:
+                description = getattr(serializer_class, doc_attribute_name, '')
+            if description:
+                doc += ' ' + formatting.dedent(description)
+            filters.append(doc)
 
     return '\n'.join(filters)
 

@@ -74,6 +74,8 @@ class DynamicFieldsSerializerMixin(object):
     """
 
     query_params = ('fields', 'exclude_fields')
+    doc_query_param_fields = "(list | string) Fields to display (other fields will be hidden)."
+    doc_query_param_exclude_fields = "(list | string) Fields *NOT* to display (overrules `fields`)."
 
     def __init__(self, *args, **kwargs):
         # Accept kwargs in __init__, like:
