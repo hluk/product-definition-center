@@ -34,7 +34,7 @@ def _flatten_field_data(field_data):
         return _flatten_field_data(field_data.values)
 
     if isinstance(field_data, dict):
-        return {key: _flatten_field_data(value) for key, value in field_data.iteritems()}
+        return {key: _flatten_field_data(value) for key, value in field_data.items()}
 
     if isinstance(field_data, list):
         return [_flatten_field_data(value) for value in field_data]
@@ -95,7 +95,7 @@ class DynamicFieldsSerializerMixinTestCase(TestCase):
 
     def test_fields(self):
         serializer = self.serializer(fields=['a', 'b'])
-        self.assertEqual(['a', 'b'], serializer.fields.keys())
+        self.assertEqual(['a', 'b'], list(serializer.fields.keys()))
 
     def test_bad_fields(self):
         self.assertRaises(FieldError, self.serializer, fields=['a', 'b', 'd'])
@@ -103,22 +103,22 @@ class DynamicFieldsSerializerMixinTestCase(TestCase):
 
     def test_exclude_fields(self):
         serializer = self.serializer(exclude_fields=['b'])
-        self.assertEqual(['a', 'c'], serializer.fields.keys())
+        self.assertEqual(['a', 'c'], list(serializer.fields.keys()))
 
     def test_exclude_bad_fields(self):
         self.assertRaises(FieldError, self.serializer, exclude_fields=['b', 'd'])
 
     def test_fields_and_exclude(self):
         serializer = self.serializer(fields=['a', 'c'], exclude_fields=['b'])
-        self.assertEqual(['a', 'c'], serializer.fields.keys())
+        self.assertEqual(['a', 'c'], list(serializer.fields.keys()))
         serializer = self.serializer(fields=['a', 'b'], exclude_fields=['b'])
-        self.assertEqual(['a'], serializer.fields.keys())
+        self.assertEqual(['a'], list(serializer.fields.keys()))
 
     def test_fields_from_context(self):
         param_dict = {'fields': ['a', 'b'], 'exclude_fields': []}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['a', 'b'], serializer.fields.keys())
+        self.assertEqual(['a', 'b'], list(serializer.fields.keys()))
 
     def test_bad_fields_from_context(self):
         param_dict = {'fields': ['d'], 'exclude_fields': []}
@@ -133,7 +133,7 @@ class DynamicFieldsSerializerMixinTestCase(TestCase):
         param_dict = {'fields': [], 'exclude_fields': ['b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['a', 'c'], serializer.fields.keys())
+        self.assertEqual(['a', 'c'], list(serializer.fields.keys()))
 
     def test_exclude_bad_fields_from_context(self):
         param_dict = {'fields': [], 'exclude_fields': ['b', 'd']}
@@ -144,38 +144,38 @@ class DynamicFieldsSerializerMixinTestCase(TestCase):
         param_dict = {'fields': ['a', 'c'], 'exclude_fields': ['b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['a', 'c'], serializer.fields.keys())
+        self.assertEqual(['a', 'c'], list(serializer.fields.keys()))
         param_dict = {'fields': ['a', 'b'], 'exclude_fields': ['b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['a'], serializer.fields.keys())
+        self.assertEqual(['a'], list(serializer.fields.keys()))
 
     def test_both_init_and_context(self):
         param_dict = {'fields': ['a'], 'exclude_fields': ['b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(fields=['c'], exclude_fields=['b'],
                                      context=self.context)
-        self.assertEqual(['a', 'c'], serializer.fields.keys())
+        self.assertEqual(['a', 'c'], list(serializer.fields.keys()))
 
     def test_fields_comma_separated(self):
         serializer = self.serializer(fields='a,b')
-        self.assertEqual(['a', 'b'], serializer.fields.keys())
+        self.assertEqual(['a', 'b'], list(serializer.fields.keys()))
 
     def test_exclude_fields_comma_separated(self):
         serializer = self.serializer(exclude_fields='a,b')
-        self.assertEqual(['c'], serializer.fields.keys())
+        self.assertEqual(['c'], list(serializer.fields.keys()))
 
     def test_fields_comma_separated_from_context(self):
         param_dict = {'fields': ['a,b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['a', 'b'], serializer.fields.keys())
+        self.assertEqual(['a', 'b'], list(serializer.fields.keys()))
 
     def test_exclude_fields_comma_separated_from_context(self):
         param_dict = {'exclude_fields': ['a,b']}
         self.mock_request.query_params = MultiValueDict(param_dict)
         serializer = self.serializer(context=self.context)
-        self.assertEqual(['c'], serializer.fields.keys())
+        self.assertEqual(['c'], list(serializer.fields.keys()))
 
 
 class LabelRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
@@ -732,7 +732,7 @@ class JSONResponseFor404(APITestCase):
     def test_returns_html_without_header(self):
         response = self.client.get('/foo/bar')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertIn('<html>', response.content)
+        self.assertIn(b'<html>', response.content)
 
     def test_respects_accept_header(self):
         response = self.client.get('/foo/bar', HTTP_ACCEPT='application/json')
@@ -820,7 +820,7 @@ class NotificationMixinTestCase(TestCase):
         request._messagings = []
         request.META = {'SERVER_NAME': '0.0.0.0', 'SERVER_PORT': 80}
         if data:
-            data = json.dumps(data)
+            data = json.dumps(data).encode('utf-8')
             request._read_started = False
             request.META.update({'CONTENT_LENGTH': len(data), 'CONTENT_TYPE': 'application/json'})
             request._stream = BytesIO(data)

@@ -37,14 +37,14 @@ class ModuleComponentFilter(MultiValueFilter):
 
 class ModuleFilterBase(django_filters.FilterSet):
     active              = CaseInsensitiveBooleanFilter()
-    koji_tag            = django_filters.CharFilter(name='koji_tag', lookup_expr='iexact')
-    runtime_dep_name    = MultiValueFilter(name='runtime_deps__dependency', distinct=True)
-    runtime_dep_stream  = MultiValueFilter(name='runtime_deps__stream', distinct=True)
-    build_dep_name      = MultiValueFilter(name='build_deps__dependency', distinct=True)
-    build_dep_stream    = MultiValueFilter(name='build_deps__stream', distinct=True)
-    component_name      = MultiValueFilter(name='rpms__srpm_name', distinct=True)
+    koji_tag            = django_filters.CharFilter(field_name='koji_tag', lookup_expr='iexact')
+    runtime_dep_name    = MultiValueFilter(field_name='runtime_deps__dependency', distinct=True)
+    runtime_dep_stream  = MultiValueFilter(field_name='runtime_deps__stream', distinct=True)
+    build_dep_name      = MultiValueFilter(field_name='build_deps__dependency', distinct=True)
+    build_dep_stream    = MultiValueFilter(field_name='build_deps__stream', distinct=True)
+    component_name      = MultiValueFilter(field_name='rpms__srpm_name', distinct=True)
     component_branch    = MultiValueFilter(
-        name='rpms__srpm_commit_branch', distinct=True,
+        field_name='rpms__srpm_commit_branch', distinct=True,
         help_text="""
         Note that "component_name" filter can match different component than this filter.
         Use "component" filter instead to match both name and branch in a single component.
@@ -54,15 +54,15 @@ class ModuleFilterBase(django_filters.FilterSet):
         Match name and branch in a single component.
         Format is "<component_name>/<component_branch>" or just "<component_name>".
         """)
-    rpm_filename        = MultiValueFilter(name='rpms__filename', distinct=True)
+    rpm_filename        = MultiValueFilter(field_name='rpms__filename', distinct=True)
 
 
 class ModuleFilter(ModuleFilterBase):
-    uid                 = django_filters.CharFilter(name='uid', lookup_expr='iexact')
-    name                = django_filters.CharFilter(name='name', lookup_expr='iexact')
-    stream              = django_filters.CharFilter(name='stream', lookup_expr='iexact')
-    version             = django_filters.CharFilter(name='version', lookup_expr='iexact')
-    context             = django_filters.CharFilter(name='context', lookup_expr='iexact')
+    uid                 = django_filters.CharFilter(field_name='uid', lookup_expr='iexact')
+    name                = django_filters.CharFilter(field_name='name', lookup_expr='iexact')
+    stream              = django_filters.CharFilter(field_name='stream', lookup_expr='iexact')
+    version             = django_filters.CharFilter(field_name='version', lookup_expr='iexact')
+    context             = django_filters.CharFilter(field_name='context', lookup_expr='iexact')
 
     class Meta:
         model = Module

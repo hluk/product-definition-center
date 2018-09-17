@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import mptt.fields
@@ -28,12 +28,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='releasecomponent',
             name='global_component',
-            field=models.ForeignKey(to='component.GlobalComponent'),
+            field=models.ForeignKey(to='component.GlobalComponent', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='releasecomponent',
             name='release',
-            field=models.ForeignKey(to='release.Release'),
+            field=models.ForeignKey(to='release.Release', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='globalcomponent',
@@ -48,12 +48,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='globalcomponent',
             name='upstream',
-            field=models.OneToOneField(null=True, blank=True, to='component.Upstream'),
+            field=models.OneToOneField(null=True, blank=True, to='component.Upstream', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='bugzillacomponent',
             name='parent_component',
-            field=mptt.fields.TreeForeignKey(related_name='children', blank=True, to='component.BugzillaComponent', null=True),
+            field=mptt.fields.TreeForeignKey(related_name='children', blank=True, to='component.BugzillaComponent', null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='releasecomponent',

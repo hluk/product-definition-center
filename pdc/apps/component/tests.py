@@ -17,8 +17,8 @@ from . import models
 
 class GlobalComponentRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
+        "pdc/apps/component/fixtures/tests/upstream.json",
         "pdc/apps/component/fixtures/tests/global_component.json",
-        "pdc/apps/component/fixtures/tests/upstream.json"
     ]
 
     def test_list_global_component(self):
@@ -456,7 +456,7 @@ class ReleaseComponentRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('releasecomponent-list')
         response = self.client.get(url + '?fields=name', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(['name'], response.data['results'][0].keys())
+        self.assertEqual(['name'], list(response.data['results'][0].keys()))
 
     def test_filter_release_component_with_brew_package(self):
         self.test_create_release_component()
@@ -496,7 +496,16 @@ class ReleaseComponentRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     def test_filter_fields_not_affect_bugzilla_component(self):
         url = reverse('releasecomponent-list')
         response = self.client.get(url + '?fields=bugzilla_component', format='json')
-        self.assertGreater(response.data['results'][0]['bugzilla_component'], 1)
+        self.assertDictEqual(
+            response.data['results'][0],
+            {
+                'bugzilla_component': {
+                    'id': 1,
+                    'name': 'python27',
+                    'parent_component': None,
+                    'subcomponents': ['lib', 'lib/xml', 'python', 'python/bin']
+                }
+            })
 
     def test_filter_release_component_by_inactive(self):
         url = reverse('releasecomponent-list')
@@ -1188,7 +1197,7 @@ class ReleaseCloneWithComponentsTestCase(TestCaseWithChangeSetMixin, APITestCase
                                      'include_inactive': 'foobar'},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Value [foobar] of include_inactive is not a boolean',
+        self.assertIn(b'Value [foobar] of include_inactive is not a boolean',
                       response.content)
 
     def test_release_components_clone(self):
@@ -1202,7 +1211,7 @@ class ReleaseCloneWithComponentsTestCase(TestCaseWithChangeSetMixin, APITestCase
                                      'target_release_id': target_release_id,
                                      'component_dist_git_branch': 'new_branch'},
                                     format='json')
-        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_release_component_clone_whithout_component(self):
         args = {"name": "Supplementary", "short": "supp", "version": "1.1",
@@ -1214,33 +1223,33 @@ class ReleaseCloneWithComponentsTestCase(TestCaseWithChangeSetMixin, APITestCase
                                     {'source_release_id': resource_release_id,
                                      'target_release_id': 'release-1.0'},
                                     format='json')
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_release_component_clone_with_error_target_release(self):
         response = self.client.post(reverse('releasecomponentclone-list'),
                                     {'source_release_id': 'release-1.0',
                                      'target_release_id': 'xxxx-1.0'},
                                     format='json')
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_release_component_clone_with_error_source_release(self):
         response = self.client.post(reverse('releasecomponentclone-list'),
                                     {'source_release_id': 'xxxx-1.0',
                                      'target_release_id': 'release-1.0'},
                                     format='json')
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_release_component_clone_with_inactive_target_release(self):
         args = {"name": "Supplementary", "short": "supp", "version": "1.1",
                 "release_type": "ga", "active": "False"}
         target_response = self.client.post(reverse('release-list'), args)
-        self.assertEquals(target_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(target_response.status_code, status.HTTP_201_CREATED)
         target_response_id = target_response.data['release_id']
         response = self.client.post(reverse('releasecomponentclone-list'),
                                     {'source_release_id': 'release-1.0',
                                      'target_release_id': target_response_id},
                                     format='json')
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class BugzillaComponentRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
@@ -1569,8 +1578,8 @@ class GroupTypeRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 class GroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
         'pdc/apps/component/fixtures/tests/group_type.json',
-        'pdc/apps/component/fixtures/tests/global_component.json',
         'pdc/apps/component/fixtures/tests/upstream.json',
+        'pdc/apps/component/fixtures/tests/global_component.json',
         'pdc/apps/release/fixtures/tests/release.json',
         'pdc/apps/release/fixtures/tests/new_release.json',
         'pdc/apps/component/fixtures/tests/release_component.json',
@@ -1735,8 +1744,8 @@ class GroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
 class ReleaseComponentRelationshipRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
-        'pdc/apps/component/fixtures/tests/global_component.json',
         'pdc/apps/component/fixtures/tests/upstream.json',
+        'pdc/apps/component/fixtures/tests/global_component.json',
         'pdc/apps/release/fixtures/tests/release.json',
         'pdc/apps/release/fixtures/tests/new_release.json',
         'pdc/apps/component/fixtures/tests/release_component_for_relationship.json',

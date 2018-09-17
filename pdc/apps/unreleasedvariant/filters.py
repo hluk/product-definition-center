@@ -10,13 +10,13 @@ from pdc.apps.module.filters import ModuleFilterBase
 
 
 class UnreleasedVariantFilter(ModuleFilterBase):
-    variant_id      = django_filters.CharFilter(name='variant_id', lookup_expr='iexact')
-    variant_uid     = django_filters.CharFilter(name='uid', lookup_expr='iexact')
-    variant_name    = django_filters.CharFilter(name='name', lookup_expr='iexact')
-    variant_type    = django_filters.CharFilter(name='type', lookup_expr='iexact')
-    variant_version = django_filters.CharFilter(name='stream', lookup_expr='iexact')
-    variant_release = django_filters.CharFilter(name='version', lookup_expr='iexact')
-    variant_context = django_filters.CharFilter(name='context', lookup_expr='iexact')
+    variant_id      = django_filters.CharFilter(field_name='variant_id', lookup_expr='iexact')
+    variant_uid     = django_filters.CharFilter(field_name='uid', lookup_expr='iexact')
+    variant_name    = django_filters.CharFilter(field_name='name', lookup_expr='iexact')
+    variant_type    = django_filters.CharFilter(field_name='type', lookup_expr='iexact')
+    variant_version = django_filters.CharFilter(field_name='stream', lookup_expr='iexact')
+    variant_release = django_filters.CharFilter(field_name='version', lookup_expr='iexact')
+    variant_context = django_filters.CharFilter(field_name='context', lookup_expr='iexact')
 
     class Meta:
         model = Module

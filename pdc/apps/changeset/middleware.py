@@ -51,7 +51,7 @@ class ChangesetMiddleware(MiddlewareMixin):
             'change_number': len(changeset.tmp_changes),
             'domain': request.build_absolute_uri('/')[:-1]
         }
-        print params_dict
+        print(params_dict)
         mail_title = """Big change happened in PDC (%(domain)s) DB""" % params_dict
         mail_body = """
         <html>

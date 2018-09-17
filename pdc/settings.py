@@ -4,15 +4,15 @@
 # http://opensource.org/licenses/MIT
 #
 """
-Django settings for pdc project.
+Django settings for PDC project.
 """
 
-from settings_common import *
+from .settings_common import *
 
 # Attempts to import server specific settings.
 # Note that all server specific settings should go to 'settings_local.py'
 try:
-    from settings_local import *  # noqa
+    from .settings_local import *  # noqa
 except ImportError:
     pass
 

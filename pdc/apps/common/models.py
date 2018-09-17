@@ -32,8 +32,8 @@ class Arch(models.Model):
     class Meta:
         pass
 
-    def __unicode__(self):
-        return u"%s" % (self.name, )
+    def __str__(self):
+        return "%s" % (self.name, )
 
     def export(self):
         # FIXME: export has been deprecated, use serializer instead.
@@ -45,8 +45,8 @@ class SigKey(models.Model):
     name                = models.CharField(max_length=50, blank=True, null=True, unique=True)
     description         = models.CharField(max_length=100, blank=True)
 
-    def __unicode__(self):
-        return u"%s" % self.key_id
+    def __str__(self):
+        return "%s" % self.key_id
 
     CACHE = {}
 
@@ -73,8 +73,8 @@ class Label(models.Model):
     class Meta:
         ordering = ('name',)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     # FIXME: Compatible with ChangeSetMixin which still uses export funtion to record changeset
     def export(self, fields=None):

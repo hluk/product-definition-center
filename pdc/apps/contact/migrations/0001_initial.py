@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import django.db.models.deletion
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Maillist',
             fields=[
-                ('contact', models.OneToOneField(parent_link=True, related_name='maillist', primary_key=True, serialize=False, to='contact.Contact')),
+                ('contact', models.OneToOneField(parent_link=True, related_name='maillist', primary_key=True, serialize=False, to='contact.Contact', on_delete=models.CASCADE)),
                 ('mail_name', models.CharField(unique=True, max_length=128, db_index=True)),
                 ('email', models.EmailField(max_length=254)),
             ],
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('contact', models.OneToOneField(parent_link=True, related_name='person', primary_key=True, serialize=False, to='contact.Contact')),
+                ('contact', models.OneToOneField(parent_link=True, related_name='person', primary_key=True, serialize=False, to='contact.Contact', on_delete=models.CASCADE)),
                 ('username', models.CharField(unique=True, max_length=128, db_index=True)),
                 ('email', models.EmailField(max_length=254)),
             ],
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contact',
             name='content_type',
-            field=models.ForeignKey(editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='rolecontact',

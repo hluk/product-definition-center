@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name='GroupResourcePermission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('group', models.ForeignKey(to='auth.Group')),
+                ('group', models.ForeignKey(to='auth.Group', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -42,14 +42,14 @@ class Migration(migrations.Migration):
             name='ResourcePermission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('permission', models.ForeignKey(to='kerb_auth.ActionPermission')),
-                ('resource', models.ForeignKey(to='kerb_auth.Resource')),
+                ('permission', models.ForeignKey(to='kerb_auth.ActionPermission', on_delete=models.CASCADE)),
+                ('resource', models.ForeignKey(to='kerb_auth.Resource', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='groupresourcepermission',
             name='resource_permission',
-            field=models.ForeignKey(to='kerb_auth.ResourcePermission'),
+            field=models.ForeignKey(to='kerb_auth.ResourcePermission', on_delete=models.CASCADE),
         ),
         migrations.RunPython(create_action)
     ]

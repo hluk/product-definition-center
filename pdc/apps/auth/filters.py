@@ -15,9 +15,9 @@ from .models import GroupResourcePermission, ResourcePermission, ResourceApiUrl
 
 class PermissionFilter(django_filters.FilterSet):
     codename        = MultiValueFilter()
-    app_label       = MultiValueFilter(name='content_type__app_label',
+    app_label       = MultiValueFilter(field_name='content_type__app_label',
                                        distinct=True)
-    model           = MultiValueFilter(name='content_type__model',
+    model           = MultiValueFilter(field_name='content_type__model',
                                        distinct=True)
 
     class Meta:
@@ -27,11 +27,11 @@ class PermissionFilter(django_filters.FilterSet):
 
 class GroupFilter(django_filters.FilterSet):
     name                  = MultiValueFilter()
-    permission_codename   = MultiValueFilter(name='permissions__codename',
+    permission_codename   = MultiValueFilter(field_name='permissions__codename',
                                              distinct=True)
-    permission_app_label  = MultiValueFilter(name='permissions__content_type__app_label',
+    permission_app_label  = MultiValueFilter(field_name='permissions__content_type__app_label',
                                              distinct=True)
-    permission_model      = MultiValueFilter(name='permissions__content_type__model',
+    permission_model      = MultiValueFilter(field_name='permissions__content_type__model',
                                              distinct=True)
 
     class Meta:
@@ -41,9 +41,9 @@ class GroupFilter(django_filters.FilterSet):
 
 
 class GroupResourcePermissionFilter(django_filters.FilterSet):
-    group = MultiValueFilter(name='group__name')
-    permission = MultiValueFilter(name='resource_permission__permission__name')
-    resource = MultiValueFilter(name='resource_permission__resource__name')
+    group = MultiValueFilter(field_name='group__name')
+    permission = MultiValueFilter(field_name='resource_permission__permission__name')
+    resource = MultiValueFilter(field_name='resource_permission__resource__name')
 
     class Meta:
         model = GroupResourcePermission
@@ -51,8 +51,8 @@ class GroupResourcePermissionFilter(django_filters.FilterSet):
 
 
 class ResourcePermissionFilter(django_filters.FilterSet):
-    permission = MultiValueFilter(name='permission__name')
-    resource = MultiValueFilter(name='resource__name')
+    permission = MultiValueFilter(field_name='permission__name')
+    resource = MultiValueFilter(field_name='resource__name')
 
     class Meta:
         model = ResourcePermission
@@ -64,14 +64,14 @@ class ResourceFilter(MultiValueFilter):
         for resource_name in value:
             regex = re.sub(r'{.*?}', r'(.*?)', resource_name)
             if regex != resource_name:
-                qs = qs.filter(**{self.name + '__regex': regex})
+                qs = qs.filter(**{self.field_name + '__regex': regex})
             else:
                 qs = super(ResourceFilter, self)._filter(qs, name, value)
         return qs
 
 
 class ResourceApiUrlFilter(django_filters.FilterSet):
-    resource = ResourceFilter(name='resource__name')
+    resource = ResourceFilter(field_name='resource__name')
     url = MultiValueFilter()
 
     class Meta:

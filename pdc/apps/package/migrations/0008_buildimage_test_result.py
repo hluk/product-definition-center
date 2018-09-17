@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import pdc.apps.compose.models
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='buildimage',
             name='test_result',
-            field=models.ForeignKey(default=pdc.apps.compose.models.ComposeAcceptanceTestingState.get_untested, to='compose.ComposeAcceptanceTestingState'),
+            field=models.ForeignKey(default=pdc.apps.compose.models.ComposeAcceptanceTestingState.get_untested, to='compose.ComposeAcceptanceTestingState', on_delete=models.CASCADE),
         ),
     ]

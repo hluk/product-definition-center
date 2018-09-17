@@ -95,12 +95,12 @@ class RPMFilter(django_filters.FilterSet):
     srpm_name   = MultiValueFilter()
     srpm_nevra  = NullableCharFilter()
     filename    = MultiValueFilter()
-    compose     = MultiValueFilter(name='composerpm__variant_arch__variant__compose__compose_id',
+    compose     = MultiValueFilter(field_name='composerpm__variant_arch__variant__compose__compose_id',
                                    distinct=True)
     srpm_commit_hash = MultiValueFilter()
     srpm_commit_branch = MultiValueFilter()
-    linked_release = MultiValueFilter(name='linked_releases__release_id', distinct=True)
-    built_for_release = MultiValueFilter(name='built_for_release__release_id', distinct=True)
+    linked_release = MultiValueFilter(field_name='linked_releases__release_id', distinct=True)
+    built_for_release = MultiValueFilter(field_name='built_for_release__release_id', distinct=True)
     provides = django_filters.CharFilter(method=partial(dependency_filter,
                                                         models.Dependency.PROVIDES))
     requires = django_filters.CharFilter(method=partial(dependency_filter,
@@ -114,7 +114,7 @@ class RPMFilter(django_filters.FilterSet):
     suggests = django_filters.CharFilter(method=partial(dependency_filter,
                                                         models.Dependency.SUGGESTS))
     has_no_deps = CaseInsensitiveBooleanFilter(
-        name='dependency__isnull',
+        field_name='dependency__isnull',
         distinct=True,
         help_text="""
     - If "true", lists only RPMs which do not have any dependencies.
@@ -132,8 +132,8 @@ class RPMFilter(django_filters.FilterSet):
 
 class ImageFilter(django_filters.FilterSet):
     file_name           = MultiValueFilter()
-    image_format        = MultiValueFilter(name='image_format__name')
-    image_type          = MultiValueFilter(name='image_type__name')
+    image_format        = MultiValueFilter(field_name='image_format__name')
+    image_type          = MultiValueFilter(field_name='image_type__name')
     disc_number         = MultiIntFilter()
     disc_count          = MultiIntFilter()
     arch                = MultiValueFilter()
@@ -145,7 +145,7 @@ class ImageFilter(django_filters.FilterSet):
     sha1                = MultiValueFilter()
     sha256              = MultiValueFilter()
     subvariant          = MultiValueFilter()
-    compose             = MultiValueFilter(name='composeimage__variant_arch__variant__compose__compose_id',
+    compose             = MultiValueFilter(field_name='composeimage__variant_arch__variant__compose__compose_id',
                                            distinct=True)
     bootable            = CaseInsensitiveBooleanFilter()
 
@@ -160,19 +160,19 @@ class BuildImageFilter(django_filters.FilterSet):
     if settings.WITH_BINDINGS:
         component_name      = MultiValueFilter(method='filter_by_component_name')
     else:
-        component_name      = MultiValueFilter(name='rpms__srpm_name', distinct=True)
-    rpm_version                 = MultiValueFilter(name='rpms__version', distinct=True)
-    rpm_release                 = MultiValueFilter(name='rpms__release', distinct=True)
+        component_name      = MultiValueFilter(field_name='rpms__srpm_name', distinct=True)
+    rpm_version                 = MultiValueFilter(field_name='rpms__version', distinct=True)
+    rpm_release                 = MultiValueFilter(field_name='rpms__release', distinct=True)
 
     image_id                = MultiValueFilter()
-    image_format            = MultiValueFilter(name='image_format__name')
+    image_format            = MultiValueFilter(field_name='image_format__name')
     md5                     = MultiValueFilter()
 
-    archive_build_nvr       = MultiValueFilter(name='archives__build_nvr', distinct=True)
-    archive_name            = MultiValueFilter(name='archives__name', distinct=True)
-    archive_size            = MultiValueFilter(name='archives__size', distinct=True)
-    archive_md5             = MultiValueFilter(name='archives__md5', distinct=True)
-    release_id              = MultiValueFilter(name='releases__release_id', distinct=True)
+    archive_build_nvr       = MultiValueFilter(field_name='archives__build_nvr', distinct=True)
+    archive_name            = MultiValueFilter(field_name='archives__name', distinct=True)
+    archive_size            = MultiValueFilter(field_name='archives__size', distinct=True)
+    archive_md5             = MultiValueFilter(field_name='archives__md5', distinct=True)
+    release_id              = MultiValueFilter(field_name='releases__release_id', distinct=True)
 
     def filter_by_component_name(self, queryset, name, value):
         from pdc.apps.bindings import models as binding_models
@@ -193,9 +193,9 @@ class BuildImageFilter(django_filters.FilterSet):
 
 
 class BuildImageRTTTestsFilter(django_filters.FilterSet):
-    build_nvr = MultiValueFilter(name='image_id')
-    test_result = MultiValueFilter(name='test_result__name')
-    image_format = MultiValueFilter(name='image_format__name')
+    build_nvr = MultiValueFilter(field_name='image_id')
+    test_result = MultiValueFilter(field_name='test_result__name')
+    image_format = MultiValueFilter(field_name='image_format__name')
 
     class Meta:
         model = models.BuildImage
@@ -208,16 +208,16 @@ class ReleasedFilesFilter(django_filters.FilterSet):
     zero_day_release = CaseInsensitiveBooleanFilter()
     obsolete = CaseInsensitiveBooleanFilter()
     file_primary_key = MultiIntFilter()
-    repo = MultiValueFilter(name='repo__id')
-    repo_name = MultiValueFilter(name='repo__name')
-    release_id = MultiValueFilter(name='repo__variant_arch__variant__release__release_id')
-    service = MultiValueFilter(name='repo__service__name')
-    arch = MultiValueFilter(name='repo__variant_arch__arch__name')
-    variant_uid = MultiValueFilter(name='repo__variant_arch__variant__variant_uid')
-    release_date_after = django_filters.DateFilter(name="release_date", lookup_expr='gte')
-    release_date_before = django_filters.DateFilter(name="release_date", lookup_expr='lte')
-    released_date_after = django_filters.DateFilter(name="released_date", lookup_expr='gte')
-    released_date_before = django_filters.DateFilter(name="released_date", lookup_expr='lte')
+    repo = MultiValueFilter(field_name='repo__id')
+    repo_name = MultiValueFilter(field_name='repo__name')
+    release_id = MultiValueFilter(field_name='repo__variant_arch__variant__release__release_id')
+    service = MultiValueFilter(field_name='repo__service__name')
+    arch = MultiValueFilter(field_name='repo__variant_arch__arch__name')
+    variant_uid = MultiValueFilter(field_name='repo__variant_arch__variant__variant_uid')
+    release_date_after = django_filters.DateFilter(field_name="release_date", lookup_expr='gte')
+    release_date_before = django_filters.DateFilter(field_name="release_date", lookup_expr='lte')
+    released_date_after = django_filters.DateFilter(field_name="released_date", lookup_expr='gte')
+    released_date_before = django_filters.DateFilter(field_name="released_date", lookup_expr='lte')
 
     class Meta:
         model = models.ReleasedFiles

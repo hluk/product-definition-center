@@ -4,7 +4,6 @@
 # http://opensource.org/licenses/MIT
 #
 import json
-import sys
 
 from distutils.version import LooseVersion
 
@@ -363,7 +362,7 @@ def home(request):
     return render(request, "home/index.html")
 
 
-def handle404(request):
+def handle404(request, exception):
     if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
         return HttpResponse(json.dumps(handlers.NOT_FOUND_JSON_RESPONSE),
                             status=status.HTTP_404_NOT_FOUND,
@@ -371,6 +370,5 @@ def handle404(request):
 
     if django_version < LooseVersion('1.9'):
         return defaults.page_not_found(request)
-    else:
-        exc_class, exc, tb = sys.exc_info()
-        return defaults.page_not_found(request, exc)
+
+    return defaults.page_not_found(request, exception)

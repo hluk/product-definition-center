@@ -11,16 +11,16 @@ from . import models
 
 
 class RepoFilter(filters.FilterSet):
-    arch = MultiValueFilter(name='variant_arch__arch__name')
-    content_category = MultiValueFilter(name='content_category__name')
-    content_format = MultiValueFilter(name='content_format__name')
-    release_id = MultiValueFilter(name='variant_arch__variant__release__release_id')
-    variant_uid = MultiValueFilter(name='variant_arch__variant__variant_uid')
-    repo_family = MultiValueFilter(name='repo_family__name')
-    service = MultiValueFilter(name='service__name')
+    arch = MultiValueFilter(field_name='variant_arch__arch__name')
+    content_category = MultiValueFilter(field_name='content_category__name')
+    content_format = MultiValueFilter(field_name='content_format__name')
+    release_id = MultiValueFilter(field_name='variant_arch__variant__release__release_id')
+    variant_uid = MultiValueFilter(field_name='variant_arch__variant__variant_uid')
+    repo_family = MultiValueFilter(field_name='repo_family__name')
+    service = MultiValueFilter(field_name='service__name')
     shadow = CaseInsensitiveBooleanFilter()
     product_id = MultiIntFilter()
-    name = MultiValueFilter(name='name')
+    name = MultiValueFilter(field_name='name')
 
     class Meta:
         model = models.Repo
@@ -40,7 +40,7 @@ class PushTargetFilter(filters.FilterSet):
     name = MultiValueFilter()
     description = MultiValueFilter()
     host = MultiValueFilter()
-    service = MultiValueFilter(name='service__name')
+    service = MultiValueFilter(field_name='service__name')
 
     class Meta:
         model = models.PushTarget
@@ -48,13 +48,13 @@ class PushTargetFilter(filters.FilterSet):
 
 
 class MultiDestinationFilter(filters.FilterSet):
-    global_component = MultiValueFilter(name='global_component__name')
+    global_component = MultiValueFilter(field_name='global_component__name')
     origin_repo = MultiIntFilter()
     destination_repo = MultiIntFilter()
-    origin_repo_name = MultiValueFilter(name='origin_repo__name')
-    destination_repo_name = MultiValueFilter(name='destination_repo__name')
-    origin_repo_release_id = MultiValueFilter(name='origin_repo__variant_arch__variant__release__release_id')
-    destination_repo_release_id = MultiValueFilter(name='destination_repo__variant_arch__variant__release__release_id')
+    origin_repo_name = MultiValueFilter(field_name='origin_repo__name')
+    destination_repo_name = MultiValueFilter(field_name='destination_repo__name')
+    origin_repo_release_id = MultiValueFilter(field_name='origin_repo__variant_arch__variant__release__release_id')
+    destination_repo_release_id = MultiValueFilter(field_name='destination_repo__variant_arch__variant__release__release_id')
     subscribers = MultiValueFilter(method='filter_by_subscribers')
     active = CaseInsensitiveBooleanFilter()
 

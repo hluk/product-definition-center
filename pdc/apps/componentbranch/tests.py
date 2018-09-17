@@ -4,7 +4,7 @@
 # http://opensource.org/licenses/MIT
 #
 from datetime import datetime, timedelta
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 

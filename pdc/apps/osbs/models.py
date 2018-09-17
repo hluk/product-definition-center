@@ -20,12 +20,12 @@ class OSBSRecord(models.Model):
                                      on_delete=models.CASCADE)
     autorebuild = models.NullBooleanField()
 
-    def __unicode__(self):
-        return u'OSBSRecord for {}/{}'.format(self.component.release.release_id,
+    def __str__(self):
+        return 'OSBSRecord for {}/{}'.format(self.component.release.release_id,
                                               self.component.name)
 
     def export(self):
         return {
-            'component': unicode(self.component),
+            'component': str(self.component),
             'autorebuild': self.autorebuild,
         }

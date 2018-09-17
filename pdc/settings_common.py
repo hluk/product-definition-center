@@ -142,7 +142,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'pdc.apps.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -173,6 +172,20 @@ ROOT_URLCONF = 'pdc.urls'
 
 import kobo
 ROOT_MENUCONF = "pdc.menu"
+
+# Monkey patch django for broken kobo.
+import six
+if six.PY3:
+    import types
+    import django.core
+    import django.utils.encoding
+    from django.urls import reverse
+
+    urlresolvers = types.ModuleType('fakeurlresolvers', '')
+    urlresolvers.reverse = reverse
+    sys.modules['django.core.urlresolvers'] = urlresolvers
+
+    django.utils.encoding.smart_unicode = django.utils.encoding.smart_text
 
 TEMPLATES = [
     {

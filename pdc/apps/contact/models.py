@@ -44,8 +44,8 @@ class ContactRole(models.Model):
                         {'detail': 'Count limit can\'t be lower than %d according to existing data.' %
                                    max(rc_max_count, gc_max_count)})
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self, fields=None):
         _fields = ['name', 'count_limit'] if fields is None else fields
@@ -77,8 +77,8 @@ class Contact(models.Model):
 
     objects = ContactManager()
 
-    def __unicode__(self):
-        return u"%s" % self.as_leaf_class()
+    def __str__(self):
+        return "%s" % self.as_leaf_class()
 
     def export(self, *args, **kwargs):
         return self.as_leaf_class().export()
@@ -106,8 +106,8 @@ class Person(Contact):
 
     objects = ContactManager()
 
-    def __unicode__(self):
-        return u"%s(%s)" % (self.username, self.email)
+    def __str__(self):
+        return "%s(%s)" % (self.username, self.email)
 
     def export(self, fields=None):
         _fields = ['username', 'email'] if fields is None else fields
@@ -124,8 +124,8 @@ class Maillist(Contact):
 
     objects = ContactManager()
 
-    def __unicode__(self):
-        return u"%s(%s)" % (self.mail_name, self.email)
+    def __str__(self):
+        return "%s(%s)" % (self.mail_name, self.email)
 
     def export(self, fields=None):
         _fields = ['mail_name', 'email'] if fields is None else fields
@@ -151,8 +151,8 @@ class GlobalComponentContact(ValidateRoleCountMixin, models.Model):
     component = models.ForeignKey('component.GlobalComponent',
                                   on_delete=models.PROTECT)
 
-    def __unicode__(self):
-        return u'%s: %s: %s' % (unicode(self.component), unicode(self.role), unicode(self.contact))
+    def __str__(self):
+        return '%s: %s: %s' % (str(self.component), str(self.role), str(self.contact))
 
     class Meta:
         ordering = ('role', 'component', 'contact')
@@ -173,8 +173,8 @@ class ReleaseComponentContact(ValidateRoleCountMixin, models.Model):
     component = models.ForeignKey('component.ReleaseComponent',
                                   on_delete=models.PROTECT)
 
-    def __unicode__(self):
-        return u'%s: %s: %s' % (unicode(self.component), unicode(self.role), unicode(self.contact))
+    def __str__(self):
+        return '%s: %s: %s' % (str(self.component), str(self.role), str(self.contact))
 
     class Meta:
         ordering = ('role', 'component', 'contact')

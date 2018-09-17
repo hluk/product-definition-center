@@ -40,19 +40,6 @@
     }
   },
   {
-    "model": "compose.ComposeTree",
-    "pk": 3,
-    "fields": {
-      "compose": 2,
-      "variant": 1,
-      "arch": 47,
-      "location": 2,
-      "scheme": 2,
-      "url": "nfs://nay.lab.la/",
-      "synced_content": [2]
-    }
-  },
-  {
     "model": "compose.Scheme",
     "pk": 2,
     "fields": {
@@ -65,6 +52,19 @@
     "fields": {
       "name": "Beijing",
       "short": "NAY"
+    }
+  },
+  {
+    "model": "compose.ComposeTree",
+    "pk": 3,
+    "fields": {
+      "compose": 2,
+      "variant": 1,
+      "arch": 47,
+      "location": 2,
+      "scheme": 2,
+      "url": "nfs://nay.lab.la/",
+      "synced_content": [2]
     }
   }
 ]

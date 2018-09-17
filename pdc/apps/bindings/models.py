@@ -18,7 +18,7 @@ class ReleaseBugzillaMapping(models.Model):
     release          = models.OneToOneField(Release, on_delete=models.CASCADE)
     bugzilla_product = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.bugzilla_product, self.release.release_id)
 
     def export(self):
@@ -81,7 +81,7 @@ class ReleaseDistGitMapping(models.Model):
     release          = models.OneToOneField(Release, related_name='releasedistgitmapping', on_delete=models.CASCADE)
     dist_git_branch  = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.dist_git_branch, self.release.release_id)
 
     def export(self):
@@ -145,8 +145,8 @@ class ReleaseComponentSRPMNameMapping(models.Model):
                                              on_delete=models.CASCADE)
     srpm_name         = models.CharField(max_length=200, db_index=True)
 
-    def __unicode__(self):
-        return u"%s - %s" % (self.release_component.name, self.srpm_name)
+    def __str__(self):
+        return "%s - %s" % (self.release_component.name, self.srpm_name)
 
     @classmethod
     def get_component_names_by_srpm_name(cls, srpm_name):

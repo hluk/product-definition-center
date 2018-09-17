@@ -15,11 +15,12 @@ from .models import ContactRole, Person, Maillist, GlobalComponentContact, Relea
 
 
 class ContactRoleRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
-    fixtures = ['pdc/apps/component/fixtures/tests/global_component.json',
-                'pdc/apps/contact/fixtures/tests/contact_role.json',
-                'pdc/apps/contact/fixtures/tests/person.json',
-                'pdc/apps/component/fixtures/tests/upstream.json'
-                ]
+    fixtures = [
+        'pdc/apps/component/fixtures/tests/upstream.json',
+        'pdc/apps/component/fixtures/tests/global_component.json',
+        'pdc/apps/contact/fixtures/tests/contact_role.json',
+        'pdc/apps/contact/fixtures/tests/person.json',
+    ]
 
     def test_create(self):
         url = reverse('contactrole-list')
@@ -97,7 +98,7 @@ class ContactRoleRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('contactrole-detail', args=['qe_ack'])
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("protected", response.content)
+        self.assertIn(b"protected", response.content)
         self.assertNumChanges([])
 
     def test_update_limit_unlimited(self):
@@ -133,11 +134,12 @@ class ContactRoleRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
 
 class PersonRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
-    fixtures = ['pdc/apps/component/fixtures/tests/global_component.json',
-                'pdc/apps/contact/fixtures/tests/contact_role.json',
-                'pdc/apps/contact/fixtures/tests/person.json',
-                'pdc/apps/component/fixtures/tests/upstream.json'
-                ]
+    fixtures = [
+        'pdc/apps/component/fixtures/tests/upstream.json',
+        'pdc/apps/component/fixtures/tests/global_component.json',
+        'pdc/apps/contact/fixtures/tests/contact_role.json',
+        'pdc/apps/contact/fixtures/tests/person.json',
+    ]
 
     def test_create(self):
         url = reverse('person-list')
@@ -284,16 +286,17 @@ class PersonRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('person-detail', args=[3])
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("protected", response.content)
+        self.assertIn(b"protected", response.content)
         self.assertNumChanges([])
 
 
 class MaillistRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
-    fixtures = ['pdc/apps/component/fixtures/tests/global_component.json',
-                'pdc/apps/contact/fixtures/tests/contact_role.json',
-                'pdc/apps/contact/fixtures/tests/maillist.json',
-                'pdc/apps/component/fixtures/tests/upstream.json'
-                ]
+    fixtures = [
+        'pdc/apps/component/fixtures/tests/upstream.json',
+        'pdc/apps/component/fixtures/tests/global_component.json',
+        'pdc/apps/contact/fixtures/tests/contact_role.json',
+        'pdc/apps/contact/fixtures/tests/maillist.json',
+    ]
 
     def test_create(self):
         url = reverse('maillist-list')
@@ -397,7 +400,7 @@ class MaillistRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('maillist-detail', args=[1])
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("protected", response.content)
+        self.assertIn(b"protected", response.content)
         self.assertNumChanges([])
 
     def test_multi_delete_protect_no_change_set(self):
@@ -457,14 +460,14 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         self.assertEqual(Person.objects.all().count(), 2)
 
     def test_destroy_successful(self):
-        response = self.client.delete(reverse('person-list'), [self.eve, self.mal], format='json')
+        response = self.client.delete(reverse('person-list'), [int(self.eve), int(self.mal)], format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNumChanges([2])
         self.assertEqual(Person.objects.all().count(), 0)
 
     def test_destroy_non_found(self):
         response = self.client.delete(reverse('person-list'),
-                                      [self.eve, self.mal, self.non_exist_1],
+                                      [int(self.eve), int(self.mal), self.non_exist_1],
                                       format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertNumChanges()
@@ -480,17 +483,17 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         expected = {
             self.eve: {'username': 'Alice',
                        'email': 'alice@example.com',
-                       'url': 'http://testserver/rest_api/v1/persons/%s/' % self.eve},
+                       'id': int(self.eve)},
             self.mal: {'username': 'Bob',
                        'email': 'bob@example.com',
-                       'url': 'http://testserver/rest_api/v1/persons/%s/' % self.mal}
+                       'id': int(self.mal)}
         }
         response = self.client.put(reverse('person-list'), args, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, expected)
+        self.assertEqual(response.data, expected)
         self.assertNumChanges([2])
         persons = Person.objects.all()
-        self.assertItemsEqual(args.values(), [person.export() for person in persons])
+        self.assertEqual(list(args.values()), [person.export() for person in persons])
 
     def test_update_error_bad_data(self):
         args = {
@@ -506,7 +509,7 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                           'id_of_invalid_data': self.mal})
         self.assertNumChanges([])
         persons = Person.objects.all()
-        self.assertItemsEqual(self.persons, [person.export() for person in persons])
+        self.assertEqual(self.persons, [person.export() for person in persons])
 
     def test_update_error_not_found(self):
         args = {
@@ -524,7 +527,7 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                           'id_of_invalid_data': str(self.non_exist_1)})
         self.assertNumChanges([])
         persons = Person.objects.all()
-        self.assertItemsEqual(self.persons, [person.export() for person in persons])
+        self.assertEqual(self.persons, [person.export() for person in persons])
 
     def test_partial_update_successful(self):
         args = {self.eve: {'username': 'Alice'},
@@ -532,19 +535,19 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         expected = {
             self.eve: {'username': 'Alice',
                        'email': 'eve@example.com',
-                       'url': 'http://testserver/rest_api/v1/persons/%s/' % self.eve},
+                       'id': int(self.eve)},
             self.mal: {'username': 'Bob',
                        'email': 'mal@example.com',
-                       'url': 'http://testserver/rest_api/v1/persons/%s/' % self.mal}
+                       'id': int(self.mal)},
         }
         response = self.client.patch(reverse('person-list'), args, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, expected)
+        self.assertDictEqual(response.data, expected)
         self.assertNumChanges([2])
-        for ident in expected.keys():
-            expected[ident].pop('url')
+        for ident in list(expected.keys()):
+            expected[ident].pop('id')
         persons = Person.objects.all()
-        self.assertItemsEqual(expected.values(), [person.export() for person in persons])
+        self.assertEqual(list(expected.values()), [person.export() for person in persons])
 
     def test_partial_update_error_bad_data(self):
         args = {self.eve: {'username': 'Alice'},
@@ -557,7 +560,7 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                           'id_of_invalid_data': self.mal})
         self.assertNumChanges([])
         persons = Person.objects.all()
-        self.assertItemsEqual(self.persons, [person.export() for person in persons])
+        self.assertEqual(self.persons, [person.export() for person in persons])
 
     def test_partial_update_error_not_found(self):
         args = {self.eve: {'username': 'Alice'},
@@ -570,7 +573,7 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                           'id_of_invalid_data': str(self.non_exist_1)})
         self.assertNumChanges([])
         persons = Person.objects.all()
-        self.assertItemsEqual(self.persons, [person.export() for person in persons])
+        self.assertEqual(self.persons, [person.export() for person in persons])
 
     def test_partial_update_empty(self):
         response = self.client.patch(reverse('person-list'), {}, format='json')
@@ -579,11 +582,11 @@ class PersonBulkRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
 class GlobalComponentContactRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
+        "pdc/apps/component/fixtures/tests/upstream.json",
         "pdc/apps/component/fixtures/tests/global_component.json",
         "pdc/apps/contact/fixtures/tests/contact_role.json",
         "pdc/apps/contact/fixtures/tests/maillist.json",
         "pdc/apps/contact/fixtures/tests/person.json",
-        "pdc/apps/component/fixtures/tests/upstream.json"
     ]
 
     @classmethod
@@ -898,13 +901,13 @@ class GlobalComponentContactRESTTestCase(TestCaseWithChangeSetMixin, APITestCase
 
 class ReleaseComponentContactRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
+        "pdc/apps/component/fixtures/tests/upstream.json",
         "pdc/apps/component/fixtures/tests/global_component.json",
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/component/fixtures/tests/release_component.json",
         "pdc/apps/contact/fixtures/tests/contact_role.json",
         "pdc/apps/contact/fixtures/tests/maillist.json",
         "pdc/apps/contact/fixtures/tests/person.json",
-        "pdc/apps/component/fixtures/tests/upstream.json"
     ]
 
     @classmethod

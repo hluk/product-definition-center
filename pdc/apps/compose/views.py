@@ -228,7 +228,7 @@ class RPMOverrideFormView(View):
             'override_v_forms': self.override_v_form,
             'variant_forms': self.variant_form,
             "forms": [(a, b, c, d) for ((a, b), (c, d)) in sorted(forms.items())],
-            "vararch_forms": var_forms.values(),
+            "vararch_forms": list(var_forms.values()),
             "management_forms": [x.management_form for x in self.formsets],
             "has_errors": any(x.errors for x in self.formsets),
             "useless_overrides": [i for i in self.useless_overrides if i.do_not_delete],
@@ -517,7 +517,7 @@ class ComposeViewSet(StrictQueryParamMixin,
             va_id_to_key_id_set.setdefault(va_id, set([])).add(key_id)
 
         compose_id_to_key_id_cache = {}
-        for compose_id, va_id_set in compose_id_to_va_id_set.iteritems():
+        for compose_id, va_id_set in compose_id_to_va_id_set.items():
             for va_id in va_id_set:
                 if va_id in va_id_to_key_id_set:
                     key_id_set = compose_id_to_key_id_cache.setdefault(compose_id, set([]))
@@ -561,7 +561,7 @@ class ComposeViewSet(StrictQueryParamMixin,
         query params, the last one will take effect.
         """
         self.order_queryset = True
-        if 'ordering' in self.request.query_params.keys():
+        if 'ordering' in list(self.request.query_params.keys()):
             self.order_queryset = False
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -582,7 +582,7 @@ class ComposeViewSet(StrictQueryParamMixin,
         compose_id = self.kwargs[self.lookup_field]
         for variant_uid in data:
             variant_data = as_dict(data[variant_uid], name=variant_uid)
-            for arch_name, status_name in variant_data.iteritems():
+            for arch_name, status_name in variant_data.items():
                 try:
                     var_arch = VariantArch.objects.get(arch__name=arch_name,
                                                        variant__variant_uid=variant_uid,
@@ -797,7 +797,7 @@ class ComposeRPMView(StrictQueryParamMixin, CheckParametersMixin, viewsets.Gener
         data = request.data
         errors = {}
         fields = ['release_id', 'composeinfo', 'rpm_manifest']
-        self._check_parameters(fields, data.keys(), errors)
+        self._check_parameters(fields, list(data.keys()), errors)
         if errors:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=errors)
         compose_id, imported_rpms = lib.compose__import_rpms(request, data['release_id'], data['composeinfo'], data['rpm_manifest'])
@@ -909,7 +909,7 @@ class ComposeFullImportViewSet(StrictQueryParamMixin, CheckParametersMixin, view
         data = request.data
         errors = {}
         fields = ['release_id', 'composeinfo', 'rpm_manifest', 'image_manifest', 'location', 'url', 'scheme']
-        self._check_parameters(fields, data.keys(), errors)
+        self._check_parameters(fields, list(data.keys()), errors)
         if errors:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=errors)
         compose_id, imported_rpms, imported_images, set_locations = lib.compose__full_import(request,
@@ -993,7 +993,7 @@ class ComposeRPMMappingView(StrictQueryParamMixin,
         for i in request.data:
             s = set(i) - field_all
             if s:
-                return Response(data={"detail": ("Fields %s are not valid inputs" % list(s))},
+                return Response(data={"detail": ("Fields %s are not valid inputs" % sorted(str(x) for x in s))},
                                 status=status.HTTP_400_BAD_REQUEST)
             if not subset.issubset(set(i)):
                 return Response(data={"detail": "Not all fields specified"}, status=status.HTTP_400_BAD_REQUEST)
@@ -1016,8 +1016,8 @@ class ComposeRPMMappingView(StrictQueryParamMixin,
                 result = False
             else:
                 result = True
-                for i in range(len(in_data.values())):
-                    result = result and self._update_parameters_acceptable((in_data.values()[i]), layer - 1)
+                for i in range(len(list(in_data.values()))):
+                    result = result and self._update_parameters_acceptable((list(in_data.values())[i]), layer - 1)
         return result
 
     def update(self, request, **kwargs):
@@ -1037,7 +1037,7 @@ class ComposeRPMMappingView(StrictQueryParamMixin,
             }
 
         Allows updating the RPM mapping by using a `PUT` request with data
-        containing new mapping. PDC will compute changes between current
+        containing new mapping. The app will compute changes between current
         mapping and the requested one. The response contains a list of changes
         suitable for partial update via `PATCH` method.
 
@@ -1128,7 +1128,7 @@ class ComposeImageView(StrictQueryParamMixin, CheckParametersMixin,
         data = request.data
         errors = {}
         fields = ['release_id', 'composeinfo', 'image_manifest']
-        self._check_parameters(fields, data.keys(), errors)
+        self._check_parameters(fields, list(data.keys()), errors)
         if errors:
             return Response(status=400, data=errors)
         compose_id, imported_images = lib.compose__import_images(request, data['release_id'], data['composeinfo'], data['image_manifest'])
@@ -1502,7 +1502,7 @@ class FilterBugzillaProductsAndComponents(StrictQueryParamMixin,
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'The nvr is required.'})
         try:
             result = lib.find_bugzilla_products_and_components_with_rpm_nvr(nvr)
-        except ValueError, ex:
+        except ValueError as ex:
             return Response(status=status.HTTP_404_NOT_FOUND, data={'detail': str(ex)})
         else:
             return Response(status=status.HTTP_200_OK, data=result)
@@ -1555,7 +1555,7 @@ class FindComposeMixin(object):
         """
         Output packages with unicode or dict
         """
-        packages = [unicode(rpm) for rpm in rpms]
+        packages = [str(rpm) for rpm in rpms]
         return (packages
                 if not self.to_dict
                 else [RPMSerializer(rpm, exclude_fields=['dependencies']).data for rpm in rpms])
@@ -1919,7 +1919,8 @@ class ComposeTreeViewSet(NotificationMixin,
          * *synced_content*: $LINK:contentdeliverycontentcategory-list$
 
         All fields are required. The required architectures must already be
-        present in PDC. compose/variant/arch combo must exist already for CREATE.
+        present in database. compose/variant/arch combo must exist already for
+        CREATE.
 
         __Response__: Same as input data.
 

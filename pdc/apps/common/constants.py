@@ -4,9 +4,7 @@
 # http://opensource.org/licenses/MIT
 #
 '''
-Created on Aug 27, 2014
-
-Declare PDC constant string here
+Declare constant strings here
 '''
 
 # Contact Types
@@ -19,7 +17,7 @@ DEVEL_CONTACT = 'Devel_Owner'
 # Arch type
 ARCH_SRC = 'src'
 
-# PDC warning field in response header
+# Warning field in response header
 PDC_WARNING_HEADER_NAME = 'pdc-warning'
 
 # Warning when using put method on optional parameter

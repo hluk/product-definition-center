@@ -94,8 +94,8 @@ class Resource(models.Model):
     name = models.CharField(max_length=500, unique=True)
     view = models.CharField(max_length=1000)
 
-    def __unicode__(self):
-        return u'%s %s' % (self.name, self.view)
+    def __str__(self):
+        return '%s %s' % (self.name, self.view)
 
     def export(self, fields=None):
         return {'name': self.name,
@@ -108,8 +108,8 @@ class ActionPermission(models.Model):
     class Meta:
         ordering = ("name", )
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     def export(self, fields=None):
         return {'name': self.name}
@@ -125,8 +125,8 @@ class ResourcePermission(models.Model):
             ('resource', 'permission')
         ]
 
-    def __unicode__(self):
-        return u"%s %s" % (self.resource, self.permission)
+    def __str__(self):
+        return "%s %s" % (self.resource, self.permission)
 
     def export(self):
         return {
@@ -145,8 +145,8 @@ class GroupResourcePermission(models.Model):
             ('resource_permission', 'group')
         ]
 
-    def __unicode__(self):
-        return u"(%s) %s" % (self.resource_permission, self.group)
+    def __str__(self):
+        return "(%s) %s" % (self.resource_permission, self.group)
 
     def export(self):
         return {
@@ -166,8 +166,8 @@ class ResourceApiUrl(models.Model):
     class Meta:
         ordering = ("resource__name",)
 
-    def __unicode__(self):
-        return u"%s %s" % (self.resource, self.url)
+    def __str__(self):
+        return "%s %s" % (self.resource, self.url)
 
     def export(self):
         return {

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('url', models.CharField(max_length=255)),
-                ('arch', models.ForeignKey(to='common.Arch')),
-                ('compose', models.ForeignKey(to='compose.Compose')),
+                ('arch', models.ForeignKey(to='common.Arch', on_delete=models.CASCADE)),
+                ('compose', models.ForeignKey(to='compose.Compose', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -40,12 +40,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='composetree',
             name='location',
-            field=models.ForeignKey(to='compose.Location'),
+            field=models.ForeignKey(to='compose.Location', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composetree',
             name='scheme',
-            field=models.ForeignKey(to='compose.Scheme'),
+            field=models.ForeignKey(to='compose.Scheme', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composetree',
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='composetree',
             name='variant',
-            field=models.ForeignKey(to='compose.Variant'),
+            field=models.ForeignKey(to='compose.Variant', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='composetree',

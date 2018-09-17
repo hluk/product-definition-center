@@ -15,16 +15,16 @@ from .models import Compose, OverrideRPM, ComposeTree, ComposeImage, VariantArch
 
 
 class ComposeFilter(django_filters.FilterSet):
-    release             = MultiValueCaseInsensitiveFilter(name='release__release_id')
-    compose_id          = MultiValueCaseInsensitiveFilter(name='compose_id')
-    compose_type        = MultiValueCaseInsensitiveFilter(name='compose_type__name')
-    acceptance_testing  = MultiValueFilter(name='acceptance_testing__name')
+    release             = MultiValueCaseInsensitiveFilter(field_name='release__release_id')
+    compose_id          = MultiValueCaseInsensitiveFilter(field_name='compose_id')
+    compose_type        = MultiValueCaseInsensitiveFilter(field_name='compose_type__name')
+    acceptance_testing  = MultiValueFilter(field_name='acceptance_testing__name')
     rpm_nvr             = django_filters.CharFilter(method="filter_nvr")
     rpm_nvra            = django_filters.CharFilter(method="filter_nvra")
     deleted             = CaseInsensitiveBooleanFilter()
-    compose_date        = MultiValueFilter(name='compose_date')
-    compose_respin      = MultiValueFilter(name='compose_respin')
-    compose_label       = MultiValueFilter(name='compose_label')
+    compose_date        = MultiValueFilter(field_name='compose_date')
+    compose_respin      = MultiValueFilter(field_name='compose_respin')
+    compose_label       = MultiValueFilter(field_name='compose_label')
     # TODO: return only latest compose
 
     @value_is_not_empty
@@ -61,13 +61,13 @@ class ComposeFilter(django_filters.FilterSet):
 
 
 class OverrideRPMFilter(django_filters.FilterSet):
-    release     = MultiValueCaseInsensitiveFilter(name='release__release_id')
+    release     = MultiValueCaseInsensitiveFilter(field_name='release__release_id')
     comment     = django_filters.CharFilter(lookup_expr='icontains')
-    arch        = MultiValueFilter(name='arch')
-    variant     = MultiValueFilter(name='variant')
-    srpm_name   = MultiValueFilter(name='srpm_name')
-    rpm_name    = MultiValueFilter(name='rpm_name')
-    rpm_arch    = MultiValueFilter(name='rpm_arch')
+    arch        = MultiValueFilter(field_name='arch')
+    variant     = MultiValueFilter(field_name='variant')
+    srpm_name   = MultiValueFilter(field_name='srpm_name')
+    rpm_name    = MultiValueFilter(field_name='rpm_name')
+    rpm_arch    = MultiValueFilter(field_name='rpm_arch')
 
     class Meta:
         model = OverrideRPM
@@ -75,11 +75,11 @@ class OverrideRPMFilter(django_filters.FilterSet):
 
 
 class ComposeTreeFilter(django_filters.FilterSet):
-    compose         = MultiValueCaseInsensitiveFilter(name='compose__compose_id')
-    variant         = MultiValueCaseInsensitiveFilter(name='variant__variant_uid')
-    arch            = MultiValueCaseInsensitiveFilter(name='arch__name')
-    location        = MultiValueCaseInsensitiveFilter(name='location__short')
-    scheme          = MultiValueCaseInsensitiveFilter(name='scheme__name')
+    compose         = MultiValueCaseInsensitiveFilter(field_name='compose__compose_id')
+    variant         = MultiValueCaseInsensitiveFilter(field_name='variant__variant_uid')
+    arch            = MultiValueCaseInsensitiveFilter(field_name='arch__name')
+    location        = MultiValueCaseInsensitiveFilter(field_name='location__short')
+    scheme          = MultiValueCaseInsensitiveFilter(field_name='scheme__name')
 
     class Meta:
         model = ComposeTree
@@ -87,10 +87,10 @@ class ComposeTreeFilter(django_filters.FilterSet):
 
 
 class ComposeTreeRTTTestFilter(django_filters.FilterSet):
-    compose         = MultiValueFilter(name='variant__compose__compose_id')
-    variant         = MultiValueFilter(name='variant__variant_uid')
-    arch            = MultiValueFilter(name='arch__name')
-    test_result     = MultiValueFilter(name='rtt_testing_status__name')
+    compose         = MultiValueFilter(field_name='variant__compose__compose_id')
+    variant         = MultiValueFilter(field_name='variant__variant_uid')
+    arch            = MultiValueFilter(field_name='arch__name')
+    test_result     = MultiValueFilter(field_name='rtt_testing_status__name')
 
     class Meta:
         model = VariantArch
@@ -98,11 +98,11 @@ class ComposeTreeRTTTestFilter(django_filters.FilterSet):
 
 
 class ComposeImageRTTTestFilter(django_filters.FilterSet):
-    compose         = MultiValueFilter(name='variant_arch__variant__compose__compose_id')
-    variant         = MultiValueFilter(name='variant_arch__variant__variant_uid')
-    arch            = MultiValueFilter(name='variant_arch__arch__name')
-    file_name       = MultiValueFilter(name='image__file_name')
-    test_result     = MultiValueFilter(name='rtt_test_result__name')
+    compose         = MultiValueFilter(field_name='variant_arch__variant__compose__compose_id')
+    variant         = MultiValueFilter(field_name='variant_arch__variant__variant_uid')
+    arch            = MultiValueFilter(field_name='variant_arch__arch__name')
+    file_name       = MultiValueFilter(field_name='image__file_name')
+    test_result     = MultiValueFilter(field_name='rtt_test_result__name')
 
     class Meta:
         model = ComposeImage

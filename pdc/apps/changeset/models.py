@@ -23,8 +23,8 @@ class Changeset(models.Model):
         self.tmp_changes = []
         super(Changeset, self).__init__(*args, **kwargs)
 
-    def __unicode__(self):
-        return u"changeset-%s" % self.id
+    def __str__(self):
+        return "changeset-%s" % self.id
 
     def add(self, target_class, target_id, old_value, new_value):
         """
@@ -69,8 +69,8 @@ class Change(models.Model):
     old_value = models.TextField()
     new_value = models.TextField()
 
-    def __unicode__(self):
-        return u"change-%s" % self.id
+    def __str__(self):
+        return "change-%s" % self.id
 
     def is_insert(self):
         """Check if a change is an insertion."""

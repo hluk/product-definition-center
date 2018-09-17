@@ -287,7 +287,7 @@ class StrictQueryParamMixin(object):
         if extra_keys:
             raise FieldError('Unknown query params: %s.' % ', '.join(sorted(extra_keys)))
         # If 'ordering' in query parameter, check the key whether in fields.
-        if 'ordering' in request.query_params.keys():
+        if 'ordering' in list(request.query_params.keys()):
             self._check_ordering_keys(request)
 
     def _check_ordering_keys(self, request):
@@ -295,7 +295,7 @@ class StrictQueryParamMixin(object):
         model_fields = [field.name for field in self.queryset.model._meta.fields]
         serializer_fields = self._get_fields_from_serializer_class()
         valid_fields = list(set(model_fields).union(set(serializer_fields)))
-        valid_fields += self.queryset.query.annotations.keys()
+        valid_fields += list(self.queryset.query.annotations.keys())
         # If there is a nested ordering with '__', check if it is valid in the RelatedNestedOrderingFilter
         tmp_list = [param.strip().lstrip('-') for param in ordering_keys.split(',') if '__' not in param]
         invalid_fields = set(tmp_list) - set(valid_fields)
@@ -307,9 +307,9 @@ class StrictQueryParamMixin(object):
         """:return the fields from serializer class."""
         serializer_class = getattr(self, 'serializer_class')
         fields = serializer_class().fields
-        valid_fields = fields.keys() + [
+        valid_fields = list(fields.keys()) + [
             field.source
-            for _, field in fields.items()
+            for _, field in list(fields.items())
             if field.source and not getattr(field, 'write_only', False)]
         return valid_fields
 
@@ -324,7 +324,7 @@ class PDCModelViewSet(StrictQueryParamMixin,
                       PermissionMixin,
                       viewsets.GenericViewSet):
     """
-    PDC common ModelViewSet.
+    Common ModelViewSet.
     With `StrictQueryParam`, `ProtectOnDelete` and `ChangeSetModel`
     """
 

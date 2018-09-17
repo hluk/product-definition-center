@@ -87,7 +87,7 @@ class ContactField(serializers.DictField):
 
     def to_internal_value(self, data):
         v_data = super(ContactField, self).to_internal_value(data)
-        for key, clazz in self.field_to_class.items():
+        for key, clazz in list(self.field_to_class.items()):
             if key in v_data:
                 contact, created = clazz.objects.get_or_create(**v_data)
                 if created:

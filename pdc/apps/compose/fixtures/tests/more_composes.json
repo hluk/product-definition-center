@@ -1,5 +1,12 @@
 [
   {
+    "model": "compose.Path",
+    "pk": 2,
+    "fields": {
+        "path": "Client/packages/somewhere"
+    }
+  },
+  {
     "model": "compose.Compose",
     "pk": 20,
     "fields": {
@@ -115,13 +122,6 @@
       "srpm_name": "bash1",
       "srpm_nevra": null,
       "filename": "bash1-1.2.3-4.b1.src.rpm"
-    }
-  },
-  {
-    "model": "compose.Path",
-    "pk": 2,
-    "fields": {
-        "path": "Client/packages/somewhere"
     }
   }
 ]

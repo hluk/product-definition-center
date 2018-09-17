@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 from pdc.apps.component.models import ReleaseComponentRelationshipType
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             name='ReleaseComponentRelationship',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('from_component', models.ForeignKey(related_name='from_release_component', to='component.ReleaseComponent')),
+                ('from_component', models.ForeignKey(related_name='from_release_component', to='component.ReleaseComponent', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -43,12 +43,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='releasecomponentrelationship',
             name='relation_type',
-            field=models.ForeignKey(to='component.ReleaseComponentRelationshipType'),
+            field=models.ForeignKey(to='component.ReleaseComponentRelationshipType', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='releasecomponentrelationship',
             name='to_component',
-            field=models.ForeignKey(related_name='to_release_component', to='component.ReleaseComponent'),
+            field=models.ForeignKey(related_name='to_release_component', to='component.ReleaseComponent', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='releasecomponentrelationship',

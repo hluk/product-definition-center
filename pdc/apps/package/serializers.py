@@ -4,6 +4,7 @@
 # http://opensource.org/licenses/MIT
 #
 import json
+import six
 
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
@@ -66,7 +67,7 @@ class DependencySerializer(serializers.BaseSerializer):
         return result
 
     def _dep_to_internal(self, type, human_type, data):
-        if not isinstance(data, basestring):
+        if not isinstance(data, six.string_types):
             raise serializers.ValidationError('Dependency <{}> for <{}> is not a string.'.format(data, human_type))
         m = models.Dependency.DEPENDENCY_PARSER.match(data)
         if not m:
@@ -183,7 +184,7 @@ class RPMRelatedField(serializers.RelatedField):
     """
 
     def to_representation(self, value):
-        return unicode(value)
+        return str(value)
 
     def to_internal_value(self, data):
         request = self.context.get('request', None)

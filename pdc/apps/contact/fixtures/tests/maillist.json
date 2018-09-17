@@ -1,22 +1,6 @@
 [
 {
     "pk": 1,
-    "model": "contact.maillist",
-    "fields": {
-        "mail_name": "maillist1",
-        "email": "maillist1@test.com"
-    }
-},
-{
-    "pk": 2,
-    "model": "contact.maillist",
-    "fields": {
-        "mail_name": "maillist2",
-        "email": "maillist2@test.com"
-    }
-},
-{
-    "pk": 1,
     "model": "contact.contact",
     "fields": {
         "active": true,
@@ -57,6 +41,23 @@
             "contact",
             "person"
         ]
+    }
+},
+
+{
+    "pk": 1,
+    "model": "contact.maillist",
+    "fields": {
+        "mail_name": "maillist1",
+        "email": "maillist1@test.com"
+    }
+},
+{
+    "pk": 2,
+    "model": "contact.maillist",
+    "fields": {
+        "mail_name": "maillist2",
+        "email": "maillist2@test.com"
     }
 }
 ]

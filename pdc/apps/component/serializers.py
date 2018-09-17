@@ -126,7 +126,7 @@ class TreeForeignKeyField(serializers.Field):
                                                                               % data)})
             # Not only bugzilla Component, but also its ancestors exist.
             if len_components > 1:
-                z = zip(components, components[1:])
+                z = list(zip(components, components[1:]))
                 root_bc_name, bc_name = z[0]
                 qs = BugzillaComponent.objects.filter(name=bc_name, parent_component__name=root_bc_name)
                 for _, bc_name in z[1:]:

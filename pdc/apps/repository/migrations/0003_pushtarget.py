@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=100, db_index=True)),
                 ('description', models.CharField(max_length=300, blank=True)),
                 ('host', models.URLField(max_length=255, blank=True)),
-                ('service', models.ForeignKey(to='repository.Service')),
+                ('service', models.ForeignKey(to='repository.Service', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['name'],

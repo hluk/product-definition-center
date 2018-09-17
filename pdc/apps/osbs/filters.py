@@ -14,8 +14,8 @@ from . import models
 
 class OSBSFilter(django_filters.FilterSet):
     autorebuild = CaseInsensitiveBooleanFilter()
-    release = MultiValueFilter(name='component__release__release_id')
-    component_name = MultiValueFilter(name='component__name')
+    release = MultiValueFilter(field_name='component__release__release_id')
+    component_name = MultiValueFilter(field_name='component__name')
 
     class Meta:
         model = models.OSBSRecord

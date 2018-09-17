@@ -15,6 +15,8 @@ docstrings for these methods are not provided, they come with some generic
 ones.
 """
 
+import six
+
 from functools import wraps
 from collections import OrderedDict
 
@@ -54,7 +56,7 @@ def _safe_run(func, *args, **kwargs):
     """
     try:
         return func(*args, **kwargs)
-    except Exception, exc:
+    except Exception as exc:
         response = api_settings.EXCEPTION_HANDLER(exc, context=kwargs)
         if response is not None:
             return response
@@ -92,12 +94,12 @@ def bulk_destroy_impl(self, request, **kwargs):
         return Response(status=status.HTTP_400_BAD_REQUEST,
                         data={'detail': 'Bulk delete needs a list of identifiers.'})
     for ident in request.data:
-        if not isinstance(ident, basestring) and not isinstance(ident, int):
+        if not isinstance(ident, six.string_types) and not isinstance(ident, int):
             return Response(status=status.HTTP_400_BAD_REQUEST,
                             data={'detail': '"%s" is not a valid identifier.' % ident})
     self.kwargs.update(kwargs)
     for ident in OrderedDict.fromkeys(request.data):
-        self.kwargs[self.lookup_field] = unicode(ident)
+        self.kwargs[self.lookup_field] = str(ident)
         response = _safe_run(self.destroy, request, **self.kwargs)
         if not status.is_success(response.status_code):
             return _failure_response(ident, response)
@@ -118,8 +120,8 @@ def bulk_update_impl(self, request, **kwargs):
     result = {}
     self.kwargs.update(kwargs)
     orig_data = request.data
-    for ident, data in orig_data.iteritems():
-        self.kwargs[self.lookup_field] = unicode(ident)
+    for ident, data in orig_data.items():
+        self.kwargs[self.lookup_field] = str(ident)
         request._full_data = data
         response = _safe_run(self.update, request, **self.kwargs)
         if not status.is_success(response.status_code):

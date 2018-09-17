@@ -57,8 +57,8 @@ def _filter_contacts(people_filter, maillist_filter, qs, values):
 class _BaseComponentContactFilter(FilterSet):
     contact = MultiValueFilter(method='filter_by_contact')
     email = MultiValueFilter(method='filter_by_email')
-    role = MultiValueFilter(name='role__name')
-    component = MultiValueRegexFilter(name='component__name')
+    role = MultiValueFilter(field_name='role__name')
+    component = MultiValueRegexFilter(field_name='component__name')
 
     @value_is_not_empty
     def filter_by_contact(self, qs, name, value):
@@ -76,9 +76,9 @@ class GlobalComponentContactFilter(_BaseComponentContactFilter):
 
 
 class ReleaseComponentContactFilter(_BaseComponentContactFilter):
-    dist_git_branch = MultiValueFilter(name='component__dist_git_branch')
-    release = MultiValueFilter(name='component__release__release_id')
-    global_component = MultiValueFilter(name='component__global_component__name')
+    dist_git_branch = MultiValueFilter(field_name='component__dist_git_branch')
+    release = MultiValueFilter(field_name='component__release__release_id')
+    global_component = MultiValueFilter(field_name='component__global_component__name')
 
     class Meta:
         model = ReleaseComponentContact

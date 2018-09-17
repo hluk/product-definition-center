@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=300)),
                 ('active', models.BooleanField(default=True)),
-                ('global_component', models.ForeignKey(to='component.GlobalComponent')),
-                ('type', models.ForeignKey(to='component.ReleaseComponentType')),
+                ('global_component', models.ForeignKey(to='component.GlobalComponent', on_delete=models.CASCADE)),
+                ('type', models.ForeignKey(to='component.ReleaseComponentType', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('eol', models.DateField()),
-                ('branch', models.ForeignKey(related_name='slas', to='componentbranch.ComponentBranch')),
-                ('sla', models.ForeignKey(to='componentbranch.SLA')),
+                ('branch', models.ForeignKey(related_name='slas', to='componentbranch.ComponentBranch', on_delete=models.CASCADE)),
+                ('sla', models.ForeignKey(to='componentbranch.SLA', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(

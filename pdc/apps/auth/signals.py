@@ -8,6 +8,7 @@
 def update_resources(sender, **kwargs):
     """Updates list of resources for which permissions can be created"""
     import inspect
+    import six
 
     from django.conf import settings
     from django.utils.module_loading import autodiscover_modules
@@ -38,7 +39,10 @@ def update_resources(sender, **kwargs):
             # Update the name of the View class
             resource_obj.view = view_name
             resource_obj.save()
-        for name, method in inspect.getmembers(view_set, predicate=inspect.ismethod):
+
+        is_function = inspect.isfunction if six.PY3 else inspect.ismethod
+
+        for name, method in inspect.getmembers(view_set, predicate=is_function):
             action_name = convert_method_to_action(name.lower())
             if action_name:
                 action_permission = action_to_obj_dict[action_name]

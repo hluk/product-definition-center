@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('autorebuild', models.NullBooleanField()),
-                ('component', models.OneToOneField(to='component.ReleaseComponent')),
+                ('component', models.OneToOneField(to='component.ReleaseComponent', on_delete=models.CASCADE)),
             ],
         ),
     ]

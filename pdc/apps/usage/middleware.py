@@ -24,7 +24,7 @@ class UsageMiddleware(MiddlewareMixin):
         # do the actual logging after the request runs.
         if re.match(r'^/%s.*$' % settings.REST_API_URL, request.path):
             request._usage = {
-                'resource': view_func.func_name,
+                'resource': view_func.__name__,
                 'now': timezone.now(),
             }
 

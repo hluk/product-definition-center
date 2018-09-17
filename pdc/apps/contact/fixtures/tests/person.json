@@ -1,21 +1,5 @@
 [
 {
-    "pk": 3,
-    "model": "contact.person",
-    "fields": {
-        "username": "person1",
-        "email": "person1@test.com"
-    }
-},
-{
-    "pk": 4,
-    "model": "contact.person",
-    "fields": {
-        "username": "person2",
-        "email": "person2@test.com"
-    }
-},
-{
     "pk": 1,
     "model": "contact.contact",
     "fields": {
@@ -57,6 +41,23 @@
             "contact",
             "person"
         ]
+    }
+},
+
+{
+    "pk": 3,
+    "model": "contact.person",
+    "fields": {
+        "username": "person1",
+        "email": "person1@test.com"
+    }
+},
+{
+    "pk": 4,
+    "model": "contact.person",
+    "fields": {
+        "username": "person2",
+        "email": "person2@test.com"
     }
 }
 ]

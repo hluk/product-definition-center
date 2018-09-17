@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import pdc.apps.common.validators
@@ -88,17 +88,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='image',
             name='image_format',
-            field=models.ForeignKey(to='package.ImageFormat'),
+            field=models.ForeignKey(to='package.ImageFormat', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='image',
             name='image_type',
-            field=models.ForeignKey(to='package.ImageType'),
+            field=models.ForeignKey(to='package.ImageType', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='buildimage',
             name='image_format',
-            field=models.ForeignKey(to='package.ImageFormat'),
+            field=models.ForeignKey(to='package.ImageFormat', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='buildimage',

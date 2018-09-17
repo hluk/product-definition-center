@@ -6,7 +6,7 @@
 #
 import json
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
@@ -145,7 +145,7 @@ class ModuleAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNumChanges([2])
-        self.assertIn('new_rpm', response.content)
+        self.assertIn(b'new_rpm', response.content)
 
     def test_create_and_delete_unreleasedvariant(self):
         url = reverse('unreleasedvariants-list')
@@ -177,7 +177,7 @@ class ModuleAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('foobar', response.content)
+        self.assertIn(b'foobar', response.content)
 
         # add another variant with rpm 'foobar' from branch 'rawhide'
         data = {
@@ -192,7 +192,7 @@ class ModuleAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('foobar', response.content)
+        self.assertIn(b'foobar', response.content)
 
         # query modules with rpm name
         data = {'component_name': 'foobar'}
@@ -248,7 +248,7 @@ class ModuleAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNumChanges([1])
-        self.assertIn('bash-doc', response.content)
+        self.assertIn(b'bash-doc', response.content)
 
         # Try to get the module with component "bash".
         response = self.client.get(url + '?component_name=bash', format='json')

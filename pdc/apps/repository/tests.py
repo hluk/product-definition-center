@@ -57,10 +57,10 @@ class RepositorySerializerTestCase(APITestCase):
         self.data['shadow'] = 'very shadow'
         serializer = serializers.RepoSerializer(data=self.data)
         self.assertFalse(serializer.is_valid())
-        self.assertIn(u'"very shadow" is not a valid boolean', serializer.errors['shadow'][0])
+        self.assertIn('"very shadow" is not a valid boolean', serializer.errors['shadow'][0])
 
     def test_deserialize_missing_value(self):
-        for field in self.data.keys():
+        for field in list(self.data.keys()):
             if field == 'shadow':
                 continue
             old_val = self.data.pop(field)
@@ -87,7 +87,7 @@ class RepositorySerializerTestCase(APITestCase):
             self.assertFalse(serializer.is_valid())
             self.assertIn(key, serializer.errors)
             self.assertEqual(len(serializer.errors[key]), 1)
-            self.assertRegexpMatches(serializer.errors[key][0],
+            self.assertRegex(serializer.errors[key][0],
                                      r"^'[^']*' is not allowed value. Use one of .*$")
             self.data[key] = old_val
 
@@ -99,7 +99,7 @@ class RepositorySerializerTestCase(APITestCase):
             self.assertFalse(serializer.is_valid())
             self.assertIn('detail', serializer.errors)
             self.assertEqual(len(serializer.errors['detail']), 1)
-            self.assertRegexpMatches(serializer.errors['detail'][0],
+            self.assertRegex(serializer.errors['detail'][0],
                                      r'^No VariantArch .*')
             self.data[key] = old_val
 
@@ -251,7 +251,7 @@ class RepositoryRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         expected_results = {}
         real_results = {}
 
-        for key, value in self.existing.iteritems():
+        for key, value in self.existing.items():
             if key == 'id':
                 continue
             response = self.client.get(reverse('contentdeliveryrepos-list'), {key: value})
@@ -431,7 +431,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         # Drop ids, they are not easily predictable on PostgreSQL
         for repo in response.data:
             del repo['id']
-        self.assertItemsEqual(response.data, [self.repo1, self.repo2])
+        self.assertEqual(response.data, [self.repo1, self.repo2])
         repos = models.Repo.objects.filter(variant_arch__variant__release__release_id='release-1.1')
         self.assertEqual(len(repos), 3)
         self.assertNumChanges([2])
@@ -446,7 +446,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo1, self.repo2])
+        self.assertEqual(response.data, [self.repo1, self.repo2])
         repos = models.Repo.objects.filter(variant_arch__variant__release__release_id='release-1.1')
         self.assertEqual(len(repos), 3)
         self.assertNumChanges([2])
@@ -467,7 +467,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_skip_on_include_repo_family(self):
@@ -477,7 +477,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_skip_on_include_content_format(self):
@@ -487,7 +487,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_skip_on_include_content_category(self):
@@ -497,7 +497,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_skip_on_include_shadow(self):
@@ -507,7 +507,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_skip_on_include_product_id(self):
@@ -517,7 +517,7 @@ class RepositoryCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         for repo in response.data:
             del repo['id']
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data, [self.repo2])
+        self.assertEqual(response.data, [self.repo2])
         self.assertNumChanges([1])
 
     def test_with_product_id_value_null(self):
@@ -621,7 +621,7 @@ class RepoBulkTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(reverse('contentdeliveryrepos-list'), args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.maxDiff = None
-        self.assertRegexpMatches(response.data.get('detail', {}).pop('content_format')[0],
+        self.assertRegex(response.data.get('detail', {}).pop('content_format')[0],
                                  "'foo' is not allowed value. Use one of .*")
         self.assertEqual(response.data,
                          {'detail': {},
@@ -816,7 +816,7 @@ class PushTargetRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(reverse('pushtarget-list'), data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {'service': ["'rhnx' is not allowed value. Use one of 'rhn', 'pulp', 'ftp'."]})
+            response.data, {'service': ["'rhnx' is not allowed value. Use one of 'ftp', 'pulp', 'rhn'."]})
         self.assertNumChanges([])
 
 
@@ -933,8 +933,8 @@ class MultiDestinationRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
             'origin_repo': {'id': 1},
             'destination_repo': {'id': 2},
         }
-        for missing_field in data.keys():
-            bad_data = {field: value for field, value in data.iteritems() if field != missing_field}
+        for missing_field in list(data.keys()):
+            bad_data = {field: value for field, value in data.items() if field != missing_field}
             response = self.client.post(reverse('multidestination-list'), bad_data, format='json')
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(response.data, {missing_field: ['This field is required.']})

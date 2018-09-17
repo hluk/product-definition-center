@@ -220,7 +220,7 @@ class GroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.put(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'permissions': [u'This field is required.']})
+        self.assertEqual(response.data, {'permissions': ['This field is required.']})
 
     def test_put_update_only_permission(self):
         url = reverse('group-detail', args=[1])
@@ -231,7 +231,7 @@ class GroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.put(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'name': [u'This field is required.']})
+        self.assertEqual(response.data, {'name': ['This field is required.']})
 
     def test_delete(self):
         url = reverse('group-detail', args=[1])
@@ -270,15 +270,15 @@ class CurrentUserTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('currentuser-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data['permissions'], ['auth.add_group'])
+        self.assertEqual(response.data['permissions'], ['auth.add_group'])
 
     def test_can_view_groups(self):
         Group.objects.get(pk=1).user_set.add(self.user)
         self.client.force_authenticate(user=self.user)
         response = self.client.get(reverse('currentuser-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data['groups'], ['group_add_group'])
-        self.assertItemsEqual(response.data['permissions'], ['auth.add_group'])
+        self.assertEqual(response.data['groups'], ['group_add_group'])
+        self.assertEqual(response.data['permissions'], ['auth.add_group'])
 
     def test_permissions_sorted(self):
         change_group = Group.objects.get(pk=2).permissions.first()
@@ -381,11 +381,11 @@ class GroupResourcePermissionsTestCase(APITestCase):
         url = reverse('releasecomponent-list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
         url = reverse('releasecomponent-detail', kwargs={'pk': 1})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         # grant user's group read permission
         url = reverse('groupresourcepermissions-list')
@@ -411,7 +411,7 @@ class GroupResourcePermissionsTestCase(APITestCase):
         url = reverse('releasecomponent-detail', kwargs={'pk': 1})
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         # grant user's group delete permission
         url = reverse('groupresourcepermissions-list')
@@ -433,13 +433,13 @@ class GroupResourcePermissionsTestCase(APITestCase):
         patch_data = {'name': 'fake_name'}
         response = self.client.patch(url, patch_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         put_data = {'release': 'release-1.0', 'global_component': 'python', 'name': 'python34',
                     'brew_package': 'python-pdc', 'active': 'True'}
         response = self.client.put(url, put_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         # grant user's group update permission
         url = reverse('groupresourcepermissions-list')
@@ -466,7 +466,7 @@ class GroupResourcePermissionsTestCase(APITestCase):
                 'brew_package': 'python-pdc', 'active': 'True'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         # grant user's group create permission
         url = reverse('groupresourcepermissions-list')
@@ -562,7 +562,7 @@ class GroupResourcePermissionsTestCase(APITestCase):
         url = reverse('findcomposebyrr-list', kwargs={'rpm_name': 'bash', 'release_id': 'release-1.0'})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data, {u'detail': u'You do not have permission to perform this action.'})
+        self.assertEqual(response.data, {'detail': 'You do not have permission to perform this action.'})
 
         # grant user's group update permission
         url = reverse('groupresourcepermissions-list')
@@ -927,7 +927,7 @@ class ResourceCreationSignalTestCase(TestCase):
             'global-components': ['read', 'create', 'update', 'delete'],
         }
 
-        for resource, actions in resources.iteritems():
+        for resource, actions in resources.items():
             for action in actions:
                 try:
                     ResourcePermission.objects.get(resource__name=resource,

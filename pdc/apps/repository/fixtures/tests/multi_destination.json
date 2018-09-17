@@ -72,30 +72,6 @@
 
     {
         "pk": 1,
-        "model": "contact.Person",
-        "fields": {
-            "username": "person1",
-            "email": "person1@example.com"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "contact.Person",
-        "fields": {
-            "username": "person2",
-            "email": "person2@example.com"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "contact.Person",
-        "fields": {
-            "username": "person3",
-            "email": "person3@example.com"
-        }
-    },
-    {
-        "pk": 1,
         "model": "contact.Contact",
         "fields": {
             "active": true,
@@ -125,6 +101,31 @@
                 "contact",
                 "person"
             ]
+        }
+    },
+
+    {
+        "pk": 1,
+        "model": "contact.Person",
+        "fields": {
+            "username": "person1",
+            "email": "person1@example.com"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "contact.Person",
+        "fields": {
+            "username": "person2",
+            "email": "person2@example.com"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "contact.Person",
+        "fields": {
+            "username": "person3",
+            "email": "person3@example.com"
         }
     },
 

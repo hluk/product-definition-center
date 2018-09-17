@@ -24,10 +24,10 @@ from pdc.apps.common.filters import (ComposeFilterSet,
 class ComponentFilter(ComposeFilterSet):
     name = MultiValueFilter()
     dist_git_path = MultiValueFilter()
-    label = MultiValueFilter(name='labels__name', distinct=True)
-    upstream_homepage = MultiValueFilter(name='upstream__homepage')
-    upstream_scm_type = MultiValueFilter(name='upstream__scm_type')
-    upstream_scm_url = MultiValueFilter(name='upstream__scm_url')
+    label = MultiValueFilter(field_name='labels__name', distinct=True)
+    upstream_homepage = MultiValueFilter(field_name='upstream__homepage')
+    upstream_scm_type = MultiValueFilter(field_name='upstream__scm_type')
+    upstream_scm_url = MultiValueFilter(field_name='upstream__scm_url')
 
     class Meta:
         model = GlobalComponent
@@ -37,12 +37,12 @@ class ComponentFilter(ComposeFilterSet):
 
 class ReleaseComponentFilter(ComposeFilterSet):
     name = MultiValueFilter()
-    release = MultiValueFilter(name='release__release_id')
-    global_component = MultiValueFilter(name='global_component__name')
-    bugzilla_component = MultiValueFilter(name='bugzilla_component__name')
+    release = MultiValueFilter(field_name='release__release_id')
+    global_component = MultiValueFilter(field_name='global_component__name')
+    bugzilla_component = MultiValueFilter(field_name='bugzilla_component__name')
     brew_package = MultiValueFilter()
     active = CaseInsensitiveBooleanFilter()
-    type = CharFilter(name='type__name')
+    type = CharFilter(field_name='type__name')
     dist_git_branch = MultiValueFilter(method='filter_by_dist_git_branch')
 
     @value_is_not_empty
@@ -59,7 +59,7 @@ class ReleaseComponentFilter(ComposeFilterSet):
 
 class BugzillaComponentFilter(ComposeFilterSet):
     name = MultiValueFilter()
-    parent_component = MultiValueFilter(name='parent_component__name')
+    parent_component = MultiValueFilter(field_name='parent_component__name')
 
     class Meta:
         model = BugzillaComponent
@@ -75,9 +75,9 @@ class GroupTypeFilter(ComposeFilterSet):
 
 
 class GroupFilter(ComposeFilterSet):
-    group_type = MultiValueFilter(name='group_type__name')
-    release = MultiValueFilter(name='release__release_id')
-    release_component = MultiValueFilter(name='components__name', distinct=True)
+    group_type = MultiValueFilter(field_name='group_type__name')
+    release = MultiValueFilter(field_name='release__release_id')
+    release_component = MultiValueFilter(field_name='components__name', distinct=True)
 
     class Meta:
         model = ReleaseComponentGroup
@@ -85,11 +85,11 @@ class GroupFilter(ComposeFilterSet):
 
 
 class ReleaseComponentRelationshipFilter(ComposeFilterSet):
-    type = MultiValueFilter(name='relation_type__name')
-    from_component_release = MultiValueFilter(name='from_component__release__release_id')
-    from_component_name = MultiValueFilter(name='from_component__name')
-    to_component_release = MultiValueFilter(name='to_component__release__release_id')
-    to_component_name = MultiValueFilter(name='to_component__name')
+    type = MultiValueFilter(field_name='relation_type__name')
+    from_component_release = MultiValueFilter(field_name='from_component__release__release_id')
+    from_component_name = MultiValueFilter(field_name='from_component__name')
+    to_component_release = MultiValueFilter(field_name='to_component__release__release_id')
+    to_component_name = MultiValueFilter(field_name='to_component__name')
 
     class Meta:
         model = ReleaseComponentRelationship

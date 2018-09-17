@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 import django.core.validators
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('short', models.CharField(max_length=200, validators=[django.core.validators.RegexValidator(regex=b'^[a-z\\-]+$', message=b'Only accept lowercase letter or -')])),
                 ('version', models.CharField(max_length=200)),
                 ('product_version_id', models.CharField(max_length=200)),
-                ('product', models.ForeignKey(to='release.Product')),
+                ('product', models.ForeignKey(to='release.Product', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -58,9 +58,9 @@ class Migration(migrations.Migration):
                 ('version', models.CharField(max_length=200)),
                 ('name', models.CharField(max_length=255)),
                 ('active', models.BooleanField(default=True)),
-                ('base_product', models.ForeignKey(blank=True, to='release.BaseProduct', null=True)),
-                ('integrated_with', models.ForeignKey(related_name='integrated_releases', blank=True, to='release.Release', null=True)),
-                ('product_version', models.ForeignKey(blank=True, to='release.ProductVersion', null=True)),
+                ('base_product', models.ForeignKey(blank=True, to='release.BaseProduct', null=True, on_delete=models.CASCADE)),
+                ('integrated_with', models.ForeignKey(related_name='integrated_releases', blank=True, to='release.Release', null=True, on_delete=models.CASCADE)),
+                ('product_version', models.ForeignKey(blank=True, to='release.ProductVersion', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('release_id',),
@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
                 ('variant_uid', models.CharField(max_length=200)),
                 ('variant_name', models.CharField(max_length=300)),
                 ('deleted', models.BooleanField(default=False)),
-                ('release', models.ForeignKey(to='release.Release')),
+                ('release', models.ForeignKey(to='release.Release', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('variant_uid',),
@@ -94,8 +94,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('deleted', models.BooleanField(default=False)),
-                ('arch', models.ForeignKey(to='common.Arch')),
-                ('variant', models.ForeignKey(to='release.Variant')),
+                ('arch', models.ForeignKey(to='common.Arch', on_delete=models.CASCADE)),
+                ('variant', models.ForeignKey(to='release.Variant', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('variant', 'arch'),
@@ -111,12 +111,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='variant',
             name='variant_type',
-            field=models.ForeignKey(to='release.VariantType'),
+            field=models.ForeignKey(to='release.VariantType', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='release',
             name='release_type',
-            field=models.ForeignKey(to='release.ReleaseType'),
+            field=models.ForeignKey(to='release.ReleaseType', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='baseproduct',

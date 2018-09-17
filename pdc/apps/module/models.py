@@ -27,8 +27,8 @@ class Module(models.Model):
             ('name', 'stream', 'version', 'context'),
         )
 
-    def __unicode__(self):
-        return u'%s' % (self.uid, )
+    def __str__(self):
+        return '%s' % (self.uid, )
 
     def export(self):
         return {
@@ -57,8 +57,8 @@ class ModuleDependency(models.Model):
 
 
 class RuntimeDependency(ModuleDependency):
-    variant = models.ForeignKey('Module', related_name='runtime_deps')
+    variant = models.ForeignKey('Module', on_delete=models.CASCADE, related_name='runtime_deps')
 
 
 class BuildDependency(ModuleDependency):
-    variant = models.ForeignKey('Module', related_name='build_deps')
+    variant = models.ForeignKey('Module', on_delete=models.CASCADE, related_name='build_deps')

@@ -39,8 +39,8 @@ class ReleaseType(models.Model):
     class Meta:
         ordering = ('short', 'name', 'suffix')
 
-    def __unicode__(self):
-        return u"%s" % self.short
+    def __str__(self):
+        return "%s" % self.short
 
 
 class BaseProduct(models.Model):
@@ -59,8 +59,8 @@ class BaseProduct(models.Model):
         )
         ordering = ("base_product_id", )
 
-    def __unicode__(self):
-        return unicode(self.base_product_id)
+    def __str__(self):
+        return str(self.base_product_id)
 
     def get_base_product_id(self):
         return create_release_id(self.short.lower(), self.version, self.release_type.short)
@@ -90,7 +90,7 @@ class Product(models.Model):
     class Meta:
         ordering = ("short", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short
 
     @property
@@ -169,7 +169,7 @@ class ProductVersion(AllowedPushTargetsModel):
         unique_together = (("short", "version"))
         ordering = ("product_version_id", )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.product_version_id
 
     @property
@@ -185,7 +185,7 @@ class ProductVersion(AllowedPushTargetsModel):
         return sum(1 for r in self.release_set.all() if r.active)
 
     def get_product_version_id(self):
-        return u"%s-%s" % (self.short.lower(), self.version)
+        return "%s-%s" % (self.short.lower(), self.version)
 
     def export(self):
         return {
@@ -224,7 +224,7 @@ class Release(AllowedPushTargetsModel):
                                             related_name='integrated_releases',
                                             on_delete=models.CASCADE)
 
-    sigkey              = models.ForeignKey(SigKey, blank=True, null=True)
+    sigkey              = models.ForeignKey(SigKey, on_delete=models.CASCADE, blank=True, null=True)
     allow_buildroot_push = models.BooleanField(default=False)
     allowed_debuginfo_services  = models.ManyToManyField(Service, blank=True)
 
@@ -234,8 +234,8 @@ class Release(AllowedPushTargetsModel):
         )
         ordering = ("release_id", )
 
-    def __unicode__(self):
-        return u"%s" % self.release_id
+    def __str__(self):
+        return "%s" % self.release_id
 
     def is_active(self):
         return self.active is True
@@ -343,8 +343,8 @@ def populate_release_id(sender, instance, **kwargs):
 class VariantType(models.Model):
     name                = models.CharField(max_length=100, blank=False)
 
-    def __unicode__(self):
-        return u"%s" % (self.name, )
+    def __str__(self):
+        return "%s" % (self.name, )
 
 
 class Variant(AllowedPushTargetsModel):
@@ -367,8 +367,8 @@ class Variant(AllowedPushTargetsModel):
         )
         ordering = ("variant_uid", )
 
-    def __unicode__(self):
-        return u"%s/%s" % (self.release, self.variant_uid)
+    def __str__(self):
+        return "%s/%s" % (self.release, self.variant_uid)
 
     @property
     def arches(self):
@@ -417,8 +417,8 @@ class CPE(models.Model):
     class Meta:
         ordering = ("cpe",)
 
-    def __unicode__(self):
-        return u"%s" % self.cpe
+    def __str__(self):
+        return "%s" % self.cpe
 
     def export(self):
         return {
@@ -438,15 +438,15 @@ class VariantCPE(models.Model):
     CPE field is not part of release variant data model so there can be
     separate permissions for assigning CPE.
     """
-    variant = models.ForeignKey(Variant, null=False, blank=False)
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE, null=False, blank=False)
 
     cpe = models.ForeignKey(CPE, null=False, blank=False, db_index=True, on_delete=models.PROTECT)
 
     class Meta:
         ordering = ('variant', 'cpe')
 
-    def __unicode__(self):
-        return u"%s-%s %s" % (self.variant.release.release_id, self.variant.variant_uid, self.cpe.cpe)
+    def __str__(self):
+        return "%s-%s %s" % (self.variant.release.release_id, self.variant.variant_uid, self.cpe.cpe)
 
     def export(self):
         return {
@@ -505,15 +505,15 @@ class VariantArch(models.Model):
         )
         ordering = ("variant", "arch")
 
-    def __unicode__(self):
-        return u"%s.%s, deleted: %s" % (self.variant, self.arch, self.deleted)
+    def __str__(self):
+        return "%s.%s, deleted: %s" % (self.variant, self.arch, self.deleted)
 
 
 class ReleaseGroupType(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class ReleaseGroup(models.Model):
@@ -526,8 +526,8 @@ class ReleaseGroup(models.Model):
     class Meta:
         ordering = ("name", )
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self, fields=None):
         _fields = ['name', 'description', 'type', 'releases', 'active'] if fields is None else fields

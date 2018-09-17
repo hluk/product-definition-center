@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -42,14 +42,14 @@ class Migration(migrations.Migration):
             name='ComposeImage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image', models.ForeignKey(to='package.Image')),
+                ('image', models.ForeignKey(to='package.Image', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
             name='ComposeRPM',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('content_category', models.ForeignKey(to='repository.ContentCategory')),
+                ('content_category', models.ForeignKey(to='repository.ContentCategory', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ('include', models.BooleanField(default=True)),
                 ('comment', models.CharField(max_length=200, blank=True)),
                 ('do_not_delete', models.BooleanField(default=False)),
-                ('release', models.ForeignKey(to='release.Release')),
+                ('release', models.ForeignKey(to='release.Release', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -89,8 +89,8 @@ class Migration(migrations.Migration):
                 ('variant_uid', models.CharField(max_length=200)),
                 ('variant_name', models.CharField(max_length=300)),
                 ('deleted', models.BooleanField(default=False)),
-                ('compose', models.ForeignKey(to='compose.Compose')),
-                ('variant_type', models.ForeignKey(related_name='compose_variant', to='release.VariantType')),
+                ('compose', models.ForeignKey(to='compose.Compose', on_delete=models.CASCADE)),
+                ('variant_type', models.ForeignKey(related_name='compose_variant', to='release.VariantType', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('variant_uid',),
@@ -101,8 +101,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('deleted', models.BooleanField(default=False)),
-                ('arch', models.ForeignKey(related_name='+', to='common.Arch')),
-                ('variant', models.ForeignKey(to='compose.Variant')),
+                ('arch', models.ForeignKey(related_name='+', to='common.Arch', on_delete=models.CASCADE)),
+                ('variant', models.ForeignKey(to='compose.Variant', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('variant', 'arch'),
@@ -111,37 +111,37 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='composerpm',
             name='path',
-            field=models.ForeignKey(to='compose.Path'),
+            field=models.ForeignKey(to='compose.Path', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composerpm',
             name='rpm',
-            field=models.ForeignKey(to='package.RPM'),
+            field=models.ForeignKey(to='package.RPM', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composerpm',
             name='sigkey',
-            field=models.ForeignKey(blank=True, to='common.SigKey', null=True),
+            field=models.ForeignKey(blank=True, to='common.SigKey', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composerpm',
             name='variant_arch',
-            field=models.ForeignKey(to='compose.VariantArch'),
+            field=models.ForeignKey(to='compose.VariantArch', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='composeimage',
             name='variant_arch',
-            field=models.ForeignKey(to='compose.VariantArch'),
+            field=models.ForeignKey(to='compose.VariantArch', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='compose',
             name='acceptance_testing',
-            field=models.ForeignKey(to='compose.ComposeAcceptanceTestingState'),
+            field=models.ForeignKey(to='compose.ComposeAcceptanceTestingState', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='compose',
             name='compose_type',
-            field=models.ForeignKey(to='compose.ComposeType'),
+            field=models.ForeignKey(to='compose.ComposeType', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='compose',
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='compose',
             name='release',
-            field=models.ForeignKey(to='release.Release'),
+            field=models.ForeignKey(to='release.Release', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='variantarch',

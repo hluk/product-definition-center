@@ -23,7 +23,7 @@ def deserialize_wrapper(func, data):
     except KeyError as e:
         raise serializers.ValidationError(
             {'detail': 'Error parsing productmd metadata.',
-             'reason': 'Missing key %s' % e.message}
+             'reason': 'Missing key %s' % e}
         )
     except Exception as e:
         raise serializers.ValidationError(
@@ -113,4 +113,7 @@ def parse_epoch_version(version):
     """
     if re.match(r'^\d+:', version):
         version = re.sub(r'^(\d+):', r'\1!', version)
+    else:
+        # Old versions of setuptools compares versions with and without epoch incorrectly.
+        version = '0!' + version
     return parse_version(version)

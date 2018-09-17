@@ -163,7 +163,7 @@ class RepoCloneViewSet(StrictQueryParamMixin, viewsets.GenericViewSet):
                           'include_content_category': ('content_category__name__in', hacks.as_list),
                           'include_shadow': ('shadow', hacks.convert_str_to_bool),
                           'include_product_id': ('product_id', hacks.convert_str_to_int)}
-        allowed_keys = list(keys) + arg_filter_map.keys()
+        allowed_keys = list(keys) + list(arg_filter_map.keys())
 
         missing_keys = keys - set(data.keys())
         if missing_keys:
@@ -179,7 +179,7 @@ class RepoCloneViewSet(StrictQueryParamMixin, viewsets.GenericViewSet):
             'variant_arch__variant__release__release_id': data['release_id_from']
         }
 
-        for arg, (filter, transform) in arg_filter_map.iteritems():
+        for arg, (filter, transform) in arg_filter_map.items():
             arg_data = request.data.get(arg)
             if arg_data:
                 kwargs[filter] = transform(arg_data, name=arg)

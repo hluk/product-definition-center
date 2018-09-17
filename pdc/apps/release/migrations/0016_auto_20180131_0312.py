@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='variantcpe',
             name='variant',
-            field=models.ForeignKey(to='release.Variant'),
+            field=models.ForeignKey(to='release.Variant', on_delete=models.CASCADE),
         ),
     ]

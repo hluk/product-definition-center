@@ -65,7 +65,7 @@ def update_user_from_ldap(user, conn=None):
     for group_name in groups:
         group, _ = Group.objects.get_or_create(name=group_name)
         group_ids.add(group.id)
-    user.groups = group_ids
+    user.groups.set(group_ids)
 
     user.save()
 

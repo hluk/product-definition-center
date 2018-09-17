@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import datetime
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('zero_day_release', models.BooleanField(default=False)),
                 ('obsolete', models.BooleanField(default=False)),
-                ('repo', models.ForeignKey(to='repository.Repo')),
+                ('repo', models.ForeignKey(to='repository.Repo', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(

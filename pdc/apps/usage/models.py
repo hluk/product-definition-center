@@ -16,5 +16,5 @@ class ResourceUsage(models.Model):
     class Meta:
         unique_together = ('resource', 'method')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s %s' % (self.method, self.resource)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='releasegroup',
             name='type',
-            field=models.ForeignKey(to='release.ReleaseGroupType'),
+            field=models.ForeignKey(to='release.ReleaseGroupType', on_delete=models.CASCADE),
         ),
     ]

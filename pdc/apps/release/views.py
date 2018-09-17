@@ -278,7 +278,7 @@ class ReleaseViewSet(NotificationMixin,
         The releases themselves are ordered by short and version.
         """
         self.order_queryset = True
-        if 'ordering' in request.query_params.keys():
+        if 'ordering' in list(request.query_params.keys()):
             self.order_queryset = False
         return super(ReleaseViewSet, self).list(request, *args, **kwargs)
 
@@ -332,7 +332,7 @@ class ReleaseImportView(StrictQueryParamMixin, viewsets.GenericViewSet):
         __URL__: $LINK:releaseimportcomposeinfo-list$
 
         __Data__: composeinfo data as saved in `composeinfo.json` file (the
-        formatting of the file is not important for PDC, and it is possible to
+        formatting of the file is not important, and it is possible to
         significantly minimize size of the file by removing indentation)
 
         __Response__:
@@ -454,13 +454,13 @@ class ReleaseCloneViewSet(StrictQueryParamMixin, viewsets.GenericViewSet):
 
         old_data = ReleaseViewSet.serializer_class(instance=old_release).data
 
-        for (field_name, field) in ReleaseViewSet.serializer_class().fields.iteritems():
+        for (field_name, field) in ReleaseViewSet.serializer_class().fields.items():
             if not field.read_only and field_name not in data:
                 value = old_data.get(field_name, None)
                 if value:
                     data[field_name] = value
 
-        for key in data.keys():
+        for key in list(data.keys()):
             if data[key] is None:
                 data.pop(key)
 
@@ -651,7 +651,7 @@ class ReleaseVariantViewSet(NotificationMixin,
     related_model_classes = (Variant, Release)
 
     doc_create = """
-        The required architectures must already be present in PDC.
+        The required architectures must already be present in database.
     """
 
     doc_update = """

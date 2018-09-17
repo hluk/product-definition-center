@@ -27,7 +27,7 @@ class ActiveReleasesFilter(filters.CaseInsensitiveBooleanFilter):
         if not value:
             return qs
         self._validate_boolean(value)
-        name = self.name + '__active'
+        name = self.field_name + '__active'
         if value.lower() in self.TRUE_STRINGS:
             return qs.filter(**{name: True}).distinct()
         else:
@@ -50,19 +50,19 @@ class AllowedPushTargetsFilter(filters.MultiValueFilter):
 
 
 class ReleaseFilter(django_filters.FilterSet):
-    release_id = filters.MultiValueFilter(name='release_id')
-    base_product = filters.MultiValueFilter(name='base_product__base_product_id')
+    release_id = filters.MultiValueFilter(field_name='release_id')
+    base_product = filters.MultiValueFilter(field_name='base_product__base_product_id')
     has_base_product = django_filters.CharFilter(method='find_has_base_product')
-    release_type = filters.MultiValueFilter(name='release_type__short')
-    product_version = filters.MultiValueFilter(name='product_version__product_version_id')
-    integrated_with = filters.NullableCharFilter(name='integrated_with__release_id')
+    release_type = filters.MultiValueFilter(field_name='release_type__short')
+    product_version = filters.MultiValueFilter(field_name='product_version__product_version_id')
+    integrated_with = filters.NullableCharFilter(field_name='integrated_with__release_id')
     active = filters.CaseInsensitiveBooleanFilter()
-    name = filters.MultiValueFilter(name='name')
-    short = filters.MultiValueFilter(name='short')
-    version = filters.MultiValueFilter(name='version')
-    sigkey = filters.MultiValueFilter(name='sigkey__key_id')
+    name = filters.MultiValueFilter(field_name='name')
+    short = filters.MultiValueFilter(field_name='short')
+    version = filters.MultiValueFilter(field_name='version')
+    sigkey = filters.MultiValueFilter(field_name='sigkey__key_id')
     allow_buildroot_push = filters.CaseInsensitiveBooleanFilter()
-    allowed_debuginfo_services = filters.MultiValueFilter(name='allowed_debuginfo_services__name')
+    allowed_debuginfo_services = filters.MultiValueFilter(field_name='allowed_debuginfo_services__name')
     allowed_push_targets = AllowedPushTargetsFilter(['product_version'])
 
     class Meta:
@@ -84,10 +84,10 @@ class ReleaseFilter(django_filters.FilterSet):
 
 
 class BaseProductFilter(django_filters.FilterSet):
-    short               = filters.MultiValueFilter(name='short')
-    version             = filters.MultiValueFilter(name='version')
-    name                = filters.MultiValueFilter(name='name')
-    base_product_id     = filters.MultiValueFilter(name='base_product_id')
+    short               = filters.MultiValueFilter(field_name='short')
+    version             = filters.MultiValueFilter(field_name='version')
+    name                = filters.MultiValueFilter(field_name='name')
+    base_product_id     = filters.MultiValueFilter(field_name='base_product_id')
 
     class Meta:
         model = BaseProduct
@@ -95,11 +95,11 @@ class BaseProductFilter(django_filters.FilterSet):
 
 
 class ProductVersionFilter(django_filters.FilterSet):
-    active              = ActiveReleasesFilter(name='release')
-    short               = filters.MultiValueFilter(name='short')
-    version             = filters.MultiValueFilter(name='version')
-    name                = filters.MultiValueFilter(name='name')
-    product_version_id  = filters.MultiValueFilter(name='product_version_id')
+    active              = ActiveReleasesFilter(field_name='release')
+    short               = filters.MultiValueFilter(field_name='short')
+    version             = filters.MultiValueFilter(field_name='version')
+    name                = filters.MultiValueFilter(field_name='name')
+    product_version_id  = filters.MultiValueFilter(field_name='product_version_id')
     allowed_push_targets = AllowedPushTargetsFilter([])
 
     class Meta:
@@ -108,10 +108,10 @@ class ProductVersionFilter(django_filters.FilterSet):
 
 
 class ProductFilter(django_filters.FilterSet):
-    active = ActiveReleasesFilter(name='productversion__release')
-    name = filters.MultiValueFilter(name='name')
-    short = filters.MultiValueFilter(name='short')
-    allowed_push_targets = filters.MultiValueFilter(name='allowed_push_targets__name')
+    active = ActiveReleasesFilter(field_name='productversion__release')
+    name = filters.MultiValueFilter(field_name='name')
+    short = filters.MultiValueFilter(field_name='short')
+    allowed_push_targets = filters.MultiValueFilter(field_name='allowed_push_targets__name')
 
     class Meta:
         model = Product
@@ -120,7 +120,7 @@ class ProductFilter(django_filters.FilterSet):
 
 class ReleaseTypeFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr="icontains")
-    short = filters.MultiValueFilter(name='short')
+    short = filters.MultiValueFilter(field_name='short')
 
     class Meta:
         model = ReleaseType
@@ -128,13 +128,13 @@ class ReleaseTypeFilter(django_filters.FilterSet):
 
 
 class ReleaseVariantFilter(django_filters.FilterSet):
-    release = filters.MultiValueFilter(name='release__release_id')
-    id      = filters.MultiValueFilter(name='variant_id')
-    uid     = filters.MultiValueFilter(name='variant_uid')
-    name    = filters.MultiValueFilter(name='variant_name')
-    type    = filters.MultiValueFilter(name='variant_type__name')
-    variant_version = filters.MultiValueFilter(name='variant_version')
-    variant_release = filters.MultiValueFilter(name='variant_release')
+    release = filters.MultiValueFilter(field_name='release__release_id')
+    id      = filters.MultiValueFilter(field_name='variant_id')
+    uid     = filters.MultiValueFilter(field_name='variant_uid')
+    name    = filters.MultiValueFilter(field_name='variant_name')
+    type    = filters.MultiValueFilter(field_name='variant_type__name')
+    variant_version = filters.MultiValueFilter(field_name='variant_version')
+    variant_release = filters.MultiValueFilter(field_name='variant_release')
     allowed_push_targets = AllowedPushTargetsFilter(['release', 'product_version'])
 
     class Meta:
@@ -143,8 +143,8 @@ class ReleaseVariantFilter(django_filters.FilterSet):
 
 
 class CPEFilter(django_filters.FilterSet):
-    cpe = filters.MultiValueFilter(name='cpe')
-    description = filters.MultiValueFilter(name='description')
+    cpe = filters.MultiValueFilter(field_name='cpe')
+    description = filters.MultiValueFilter(field_name='description')
 
     class Meta:
         model = CPE
@@ -152,9 +152,9 @@ class CPEFilter(django_filters.FilterSet):
 
 
 class ReleaseVariantCPEFilter(django_filters.FilterSet):
-    release = filters.MultiValueFilter(name='variant__release__release_id')
-    variant_uid = filters.MultiValueFilter(name='variant__variant_uid')
-    cpe = filters.MultiValueFilter(name='cpe__cpe')
+    release = filters.MultiValueFilter(field_name='variant__release__release_id')
+    variant_uid = filters.MultiValueFilter(field_name='variant__variant_uid')
+    cpe = filters.MultiValueFilter(field_name='cpe__cpe')
 
     class Meta:
         model = VariantCPE
@@ -162,10 +162,10 @@ class ReleaseVariantCPEFilter(django_filters.FilterSet):
 
 
 class ReleaseGroupFilter(django_filters.FilterSet):
-    name           = filters.MultiValueFilter(name='name')
-    description    = filters.MultiValueFilter(name='description')
-    type           = filters.MultiValueFilter(name='type__name')
-    releases       = filters.MultiValueFilter(name='releases__release_id')
+    name           = filters.MultiValueFilter(field_name='name')
+    description    = filters.MultiValueFilter(field_name='description')
+    type           = filters.MultiValueFilter(field_name='type__name')
+    releases       = filters.MultiValueFilter(field_name='releases__release_id')
     active         = filters.CaseInsensitiveBooleanFilter()
 
     class Meta:

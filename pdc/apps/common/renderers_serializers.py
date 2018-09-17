@@ -78,7 +78,7 @@ def describe_serializer(serializer, include_read_only):
     """
     if hasattr(serializer, 'get_fields'):
         data = {}
-        for field_name, field in serializer.get_fields().iteritems():
+        for field_name, field in serializer.get_fields().items():
             if not field.read_only or include_read_only:
                 data[field_name] = _serializer_field_data(serializer, field_name, field, include_read_only)
 
@@ -127,7 +127,7 @@ def _serializer_field_to_string(items, container_format):
 
 def _serializer_field_dict_to_string(field, parent_fields):
     items = []
-    for field_name, field_data in sorted(field.iteritems()):
+    for field_name, field_data in sorted(field.items()):
         key = _serializer_field_attribute_to_string('name', '"%s"' % field_name)
         parent_fields.append(field_name)
         value = _serializer_data_to_string(field_data, parent_fields)

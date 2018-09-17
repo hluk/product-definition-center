@@ -7,8 +7,8 @@
 
 
 """
-PDC Auth
-========
+Authentication
+==============
 
 This is for supporting kerberos authentication along with anonymous
 access. User details can be read from LDAP.

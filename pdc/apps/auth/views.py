@@ -121,7 +121,7 @@ def _get_resource_permissions_matrix(user):
 
     ori_action_dict = {}
     for resource_name, view_set, _ in router.registry:
-        for name, _ in inspect.getmembers(view_set, predicate=inspect.ismethod):
+        for name, _ in inspect.getmembers(view_set, predicate=inspect.isfunction):
             if name.lower() in ['update', 'create', 'destroy', 'list', 'partial_update', 'retrieve']:
                 ori_action_dict.setdefault(resource_name, []).append(convert_method_to_action(name.lower()))
 
@@ -204,7 +204,7 @@ def get_url_with_resource(request):
         api_root_dict[prefix] = list_name.format(basename=basename)
         viewsets[prefix] = viewset
     sorted_api_root_dict = OrderedDict(sorted(api_root_dict.items()))
-    for key, url_name in sorted_api_root_dict.items():
+    for key, url_name in list(sorted_api_root_dict.items()):
         name = URL_ARG_RE.sub(r'{\1}', key)
         ret[name] = None
         urlargs = [_get_arg_value(arg[0]) for arg in URL_ARG_RE.findall(key)]

@@ -34,8 +34,8 @@ class ChangesetDetailView(DetailView):
 class ChangesetViewSet(StrictQueryParamMixin,
                        viewsets.ReadOnlyModelViewSet):
     """
-    PDC tracks every modification that was made through any of the API
-    end-points. This provides an auditable trail of who changed what and when.
+    Tracks every modification that was made through any of the API end-points.
+    This provides an auditable trail of who changed what and when.
 
     Each request to the API creates one `Changeset`, which contains one or more
     `Change`s.

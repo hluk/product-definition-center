@@ -6,7 +6,7 @@
 #
 import json
 import mock
-from StringIO import StringIO
+from io import StringIO
 
 from django.urls import reverse
 from django.test import TestCase
@@ -38,10 +38,10 @@ class ComposeModelTestCase(TestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -49,7 +49,7 @@ class ComposeModelTestCase(TestCase):
         self.compose = models.Compose.objects.get(id=1)
 
     def test_get_rpms_existing(self):
-        self.assertEqual(unicode(self.compose.get_rpms('bash')),
+        self.assertEqual(str(self.compose.get_rpms('bash')),
                          '<QuerySet [<RPM: bash-0:1.2.3-4.b1.x86_64.rpm>]>')
 
     def test_get_rpms_nonexisting(self):
@@ -65,10 +65,10 @@ class FindComposeByReleaseRPMTestCase(APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/more_composes.json",
     ]
@@ -111,21 +111,21 @@ class FindComposeByReleaseRPMTestCase(APITestCase):
         response = self.client.get(url, {'to_dict': True})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected = [
-            {'compose': u'compose-1', 'packages': [
-                {'name': u'bash', 'version': u'1.2.3', 'epoch': 0, 'release': u'4.b1',
-                 'arch': u'x86_64', 'srpm_name': u'bash', 'srpm_nevra': u'bash-0:1.2.3-4.b1.src',
+            {'compose': 'compose-1', 'packages': [
+                {'name': 'bash', 'version': '1.2.3', 'epoch': 0, 'release': '4.b1',
+                 'arch': 'x86_64', 'srpm_name': 'bash', 'srpm_nevra': 'bash-0:1.2.3-4.b1.src',
                  'filename': 'bash-1.2.3-4.b1.x86_64.rpm', 'id': 1, 'built_for_release': None,
                  'linked_composes': ['compose-1', 'compose-2'], 'linked_releases': [],
                  'srpm_commit_hash': None, 'srpm_commit_branch': None}]},
-            {'compose': u'compose-2', 'packages': [
-                {'name': u'bash', 'version': u'1.2.3', 'epoch': 0, 'release': u'4.b1',
-                 'arch': u'x86_64', 'srpm_name': u'bash', 'srpm_nevra': u'bash-0:1.2.3-4.b1.src',
+            {'compose': 'compose-2', 'packages': [
+                {'name': 'bash', 'version': '1.2.3', 'epoch': 0, 'release': '4.b1',
+                 'arch': 'x86_64', 'srpm_name': 'bash', 'srpm_nevra': 'bash-0:1.2.3-4.b1.src',
                  'filename': 'bash-1.2.3-4.b1.x86_64.rpm', 'id': 1, 'built_for_release': None,
                  'linked_composes': ['compose-1', 'compose-2'], 'linked_releases': [],
                  'srpm_commit_hash': None, 'srpm_commit_branch': None}]},
-            {'compose': u'compose-3', 'packages': [
-                {'name': u'bash', 'version': u'5.6.7', 'epoch': 0, 'release': u'8',
-                 'arch': u'x86_64', 'srpm_name': u'bash', 'srpm_nevra': None,
+            {'compose': 'compose-3', 'packages': [
+                {'name': 'bash', 'version': '5.6.7', 'epoch': 0, 'release': '8',
+                 'arch': 'x86_64', 'srpm_name': 'bash', 'srpm_nevra': None,
                  'filename': 'bash-5.6.7-8.x86_64.rpm', 'id': 2, 'built_for_release': None,
                  'linked_composes': ['compose-3'], 'linked_releases': [],
                  'srpm_commit_hash': None, 'srpm_commit_branch': None}]}
@@ -153,10 +153,10 @@ class FindOlderComposeByComposeRPMTestCase(APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/more_composes.json",
     ]
@@ -193,7 +193,7 @@ class FindOlderComposeByComposeRPMTestCase(APITestCase):
         self.assertEqual(response.data.get('compose'), "compose-2")
         packages = response.data.get('packages')
         self.assertEqual(len(packages), 1)
-        self.assertItemsEqual(packages[0].pop('linked_composes'), ['compose-1', 'compose-2'])
+        self.assertCountEqual(packages[0].pop('linked_composes'), ['compose-1', 'compose-2'])
         self.assertEqual(packages[0].pop('linked_releases'), [])
         packages[0].pop('id')
         self.assertDictEqual(
@@ -241,9 +241,9 @@ class FindCompoeByProductVersionRPMTestCase(APITestCase):
         "pdc/apps/release/fixtures/tests/product.json",
         "pdc/apps/release/fixtures/tests/product_version.json",
         "pdc/apps/release/fixtures/tests/release.json",
+        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/compose/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/more_composes.json",
     ]
@@ -300,10 +300,10 @@ class ComposeAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -320,7 +320,7 @@ class ComposeAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         crpm.save()
         response = self.client.get(reverse('compose-detail', args=["compose-1"]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data['sigkeys'], ['ABCDEF', None])
+        self.assertCountEqual(response.data['sigkeys'], ['ABCDEF', None])
 
     def test_get_nonexisting(self):
         response = self.client.get(reverse('compose-detail', args=["does-not-exist"]))
@@ -478,10 +478,10 @@ class ComposeMultipleFilterTestCase(APITestCase):
         "pdc/apps/release/fixtures/tests/product.json",
         "pdc/apps/release/fixtures/tests/product_version.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/more_composes.json",
     ]
@@ -547,10 +547,10 @@ class ComposeApiOrderingTestCase(APITestCase):
         "pdc/apps/release/fixtures/tests/product.json",
         "pdc/apps/release/fixtures/tests/product_version.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/more_composes.json",
     ]
@@ -573,9 +573,9 @@ class ComposeApiOrderingTestCase(APITestCase):
 class ComposeUpdateTestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
         "pdc/apps/release/fixtures/tests/release.json",
+        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/compose/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/more_releases.json",
     ]
 
@@ -692,7 +692,7 @@ class ComposeUpdateTestCase(TestCaseWithChangeSetMixin, APITestCase):
                                      format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNumChanges([1])
-        self.assertEqual(response.data.keys(), ['compose-1'])
+        self.assertEqual(list(response.data.keys()), ['compose-1'])
         self.assertEqual(response.data['compose-1'].get('linked_releases'),
                          ['release-1.0-updates'])
 
@@ -761,9 +761,9 @@ class ComposeUpdateTestCase(TestCaseWithChangeSetMixin, APITestCase):
 class ComposeUpdateMessagingTestCase(APITestCase):
     fixtures = [
         "pdc/apps/release/fixtures/tests/release.json",
+        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/compose/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/more_releases.json",
     ]
 
@@ -859,7 +859,7 @@ class OverridesRPMAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
     def test_clear(self):
         response = self.client.delete(reverse('overridesrpm-list'), {'release': 'release-1.0'})
         self.assertEqual(models.OverrideRPM.objects.count(), 0)
-        self.assertItemsEqual(response.data, [self.override_rpm])
+        self.assertCountEqual(response.data, [self.override_rpm])
 
     def test_clear_with_no_matched_record(self):
         response = self.client.delete(reverse('overridesrpm-list'), {'release': 'no_such_release'})
@@ -872,7 +872,7 @@ class OverridesRPMAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
 
         response = self.client.delete(reverse('overridesrpm-list'), {'release': 'release-1.0'})
         self.assertEqual(models.OverrideRPM.objects.count(), 1)
-        self.assertItemsEqual(response.data, [self.override_rpm])
+        self.assertCountEqual(response.data, [self.override_rpm])
 
     def test_delete_with_extra_param(self):
         models.OverrideRPM.objects.create(release=self.release, variant="Server", arch="x86_64",
@@ -901,7 +901,7 @@ class OverridesRPMAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
 
         response = self.client.delete(reverse('overridesrpm-list'), {'release': 'release-1.0', 'force': True})
         self.assertEqual(models.OverrideRPM.objects.count(), 0)
-        self.assertItemsEqual(response.data, [self.override_rpm, self.do_not_delete_orpm])
+        self.assertCountEqual(response.data, [self.override_rpm, self.do_not_delete_orpm])
 
     def test_delete_two_by_id(self):
         override = models.OverrideRPM.objects.create(release=self.release, variant="Server",
@@ -921,12 +921,12 @@ class OverridesRPMCloneAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/more_release_mapping.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
@@ -1448,12 +1448,12 @@ class RPMMappingAPITestCase(APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/release/fixtures/tests/variant.json",
-        "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
+        "pdc/apps/release/fixtures/tests/variant.json",
+        "pdc/apps/release/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -1573,7 +1573,7 @@ class RPMMappingAPITestCase(APITestCase):
                                                  "do_not_delete": False, "fake1": "", "fake2": True}],
                                      format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"detail": "Fields [u'fake1', u'fake2'] are not valid inputs"})
+        self.assertEqual(response.data, {"detail": "Fields ['fake1', 'fake2'] are not valid inputs"})
 
     def test_partial_update_with_wrong_input_format(self):
         self.client.force_authenticate(create_user("user", perms=[]))
@@ -1664,11 +1664,11 @@ class FilterBugzillaProductsAndComponentsTestCase(APITestCase):
     fixtures = [
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
-        "pdc/apps/component/fixtures/tests/release_component.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/component/fixtures/tests/upstream.json",
-        "pdc/apps/component/fixtures/tests/global_component.json"
+        "pdc/apps/component/fixtures/tests/global_component.json",
+        "pdc/apps/component/fixtures/tests/release_component.json",
     ]
 
     def setUp(self):
@@ -1727,7 +1727,7 @@ class FilterBugzillaProductsAndComponentsTestCase(APITestCase):
         url = reverse('bugzilla-list')
         response = self.client.get(url + '?nvr=bash-1.2.3-4.b1', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('kernel', response.content)
+        self.assertIn(b'kernel', response.content)
 
     @mock.patch('pdc.apps.compose.models.Compose.objects.filter')
     def test_filter_with_srpm_component_name_mapping(self, mock_filter):
@@ -1745,7 +1745,7 @@ class FilterBugzillaProductsAndComponentsTestCase(APITestCase):
         url = reverse('bugzilla-list')
         response = self.client.get(url + '?nvr=bash-1.2.3-4.b1', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('kernel', response.content)
+        self.assertIn(b'kernel', response.content)
 
 
 class RPMMappingTestCase(TestCase):
@@ -1755,10 +1755,10 @@ class RPMMappingTestCase(TestCase):
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -1799,10 +1799,10 @@ class OverrideManagementTestCase(TestCase):
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/more_releases.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
@@ -2132,10 +2132,10 @@ class OverridePreviewTestCase(TestCase):
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -2314,10 +2314,10 @@ class OverridePreviewBulkTestCase(TestCase):
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm_more.json",
     ]
@@ -2417,7 +2417,7 @@ class OverridePreviewBulkTestCase(TestCase):
         })
         response = client.post('/override/manage/release-1.0/?package=bash', self.preview_form_data)
         self.assertEqual(response.status_code, 302)
-        self.assertItemsEqual(
+        self.assertCountEqual(
             [o.export() for o in models.OverrideRPM.objects.all()],
             [{"release_id": 'release-1.0', "variant": 'Server', "arch": 'x86_64',
               "srpm_name": 'bash', "rpm_name": 'bash', "rpm_arch": 'x86_64',
@@ -2435,10 +2435,10 @@ class UselessOverrideTestCase(TestCase):
         "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -2594,11 +2594,11 @@ class UselessOverrideTestCase(TestCase):
 class ComposeTreeAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/location.json",
         "pdc/apps/compose/fixtures/tests/scheme.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/more_composes_variants.json",
         "pdc/apps/compose/fixtures/tests/composetree.json",
     ]
@@ -2690,28 +2690,28 @@ class ComposeTreeAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         data = {'variant': 'Server', 'arch': 'x86_64', 'location': 'BRQ',
                 'url': 'nfs://nay.lab.la/', 'scheme': 'nfs', 'synced_content': ['debug']}
         response = self.client.post(url, data, format='json')
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_composetree_without_variant(self):
         url = reverse('composetreelocations-list')
         data = {'compose': 'compose-1', 'arch': 'x86_64', 'location': 'BRQ',
                 'url': 'nfs://nay.lab.la/', 'scheme': 'nfs', 'synced_content': ['debug']}
         response = self.client.post(url, data, format='json')
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_composetree_with_error_compose(self):
         url = reverse('composetreelocations-list')
         data = {'compose': 'xxxx', 'variant': 'Server', 'arch': 'x86_64', 'location': 'BRQ',
                 'url': 'nfs://nay.lab.la/', 'scheme': 'nfs', 'synced_content': ['debug']}
         response = self.client.post(url, data, format='json')
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_composetree_with_extra_param(self):
         url = reverse('composetreelocations-list')
         data = {'compose': 'compose-1', 'variant': 'Server', 'arch': 'x86_64', 'location': 'BRQ',
                 'url': 'nfs://nay.lab.la/', 'scheme': 'nfs', 'synced_content': ['debug'], 'fake_key': 'fake_value'}
         response = self.client.post(url, data, format='json')
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_composetree_default_syncedcontent(self):
         url = reverse('composetreelocations-list')
@@ -2826,11 +2826,11 @@ class ComposeTreeAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
 class ComposeTreeRTTTestAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/location.json",
         "pdc/apps/compose/fixtures/tests/scheme.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/more_composes_variants.json",
         "pdc/apps/compose/fixtures/tests/composetree.json",
     ]
@@ -2913,7 +2913,7 @@ class ComposeTreeRTTTestAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
                                      {'test_result': 'unknown'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('test_result'),
-                         ["'unknown' is not allowed value. Use one of 'untested', 'passed', 'failed'."])
+                         ["'unknown' is not allowed value. Use one of 'failed', 'passed', 'untested'."])
         self.assertNumChanges([])
 
     def test_composetreertttest_can_bulk_update_test_result(self):
@@ -2932,9 +2932,9 @@ class ComposeTreeRTTTestAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
 class ComposeImageRTTTestAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
     fixtures = [
         "pdc/apps/release/fixtures/tests/release.json",
+        "pdc/apps/compose/fixtures/tests/compose.json",
         "pdc/apps/compose/fixtures/tests/variant.json",
         "pdc/apps/compose/fixtures/tests/variant_arch.json",
-        "pdc/apps/compose/fixtures/tests/compose.json",
         'pdc/apps/package/fixtures/test/image.json',
         "pdc/apps/compose/fixtures/tests/compose_composeimage.json",
     ]
@@ -3027,7 +3027,7 @@ class ComposeImageRTTTestAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
                                      {'test_result': 'unknown'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('test_result'),
-                         ["'unknown' is not allowed value. Use one of 'untested', 'passed', 'failed'."])
+                         ["'unknown' is not allowed value. Use one of 'failed', 'passed', 'untested'."])
         self.assertNumChanges([])
 
     def test_can_bulk_update_test_result(self):

@@ -39,7 +39,7 @@ def _normalized_fields_set(values):
         return set()
 
     if isinstance(values, list):
-        field_lists = map(lambda value: value.split(','), values)
+        field_lists = [value.split(',') for value in values]
         result = set(chain.from_iterable(field_lists))
     else:
         result = set(values.split(','))
@@ -103,12 +103,12 @@ class DynamicFieldsSerializerMixin(object):
         # top level serializer.
         request = self._get_top_level_request()
         if request:
-            for arg_name, fields in field_args.iteritems():
+            for arg_name, fields in field_args.items():
                 fields_param = request.query_params.getlist(arg_name, [])
                 fields.update(_normalized_fields_set(fields_param))
 
         valid_fields = set(self.fields.keys())
-        for arg_name, fields in field_args.iteritems():
+        for arg_name, fields in field_args.items():
             _verify_field_names(fields, valid_fields, arg_name)
 
         fields = field_args['fields']
@@ -153,7 +153,7 @@ class StrictSerializerMixin(DynamicFieldsSerializerMixin, IntrospectableSerializ
             raise serializers.ValidationError('Invalid input: must be a dict.')
         extra_fields = set(data.keys()) - self.get_allowed_keys()
         self.maybe_raise_error(extra_fields)
-        self.check_read_only_fields(data.keys())
+        self.check_read_only_fields(list(data.keys()))
         return super(StrictSerializerMixin, self).to_internal_value(data)
 
     @staticmethod

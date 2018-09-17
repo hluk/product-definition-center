@@ -65,7 +65,7 @@ def _link_compose_to_integrated_product(request, compose, variant):
     """
     If the variant belongs to an integrated layered product, update the compose
     so that it is linked to the release for that product. Note that the variant
-    argument should be variant retrieved from compose info, not a PDC model.
+    argument should be variant retrieved from compose info.
     """
     release = variant.release
     if release.name:
@@ -191,9 +191,9 @@ def compose__import_rpms(request, release_id, composeinfo, rpm_manifest):
                 compose_rpms_in_db.add(key)
 
             sources = set()
-            for srpm_nevra, rpms in rm.rpms.get(variant.uid, {}).get(arch, {}).iteritems():
+            for srpm_nevra, rpms in rm.rpms.get(variant.uid, {}).get(arch, {}).items():
                 sources.add(srpm_nevra)
-                for rpm_nevra, rpm_data in rpms.iteritems():
+                for rpm_nevra, rpm_data in rpms.items():
                     imported_rpms += 1
                     path, filename = os.path.split(rpm_data['path'])
                     rpm_id = get_or_insert_rpm(rpms_in_db, cursor, rpm_nevra, srpm_nevra, filename)

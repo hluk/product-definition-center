@@ -97,7 +97,7 @@ class APIRootTestCase(APITestCase):
     def test_api_root_is_sorted(self):
         rsp = self.client.get(reverse('api-root'))
         self.assertEqual(rsp.status_code, status.HTTP_200_OK)
-        self.assertEqual(rsp.data.keys(), sorted(rsp.data.keys()))
+        self.assertEqual(list(rsp.data.keys()), sorted(rsp.data.keys()))
 
     def test_root_includes_release_component_contacts(self):
         response = self.client.get(reverse('api-root'))

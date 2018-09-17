@@ -26,8 +26,8 @@ class ReleaseSchedule(models.Model):
         ordering = ["date"]
         get_latest_by = "date"
 
-    def __unicode__(self):
-        return u"%s %s" % (self.release, self.sla)
+    def __str__(self):
+        return "%s %s" % (self.release, self.sla)
 
     @property
     def active(self):

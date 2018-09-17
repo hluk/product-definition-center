@@ -3,6 +3,10 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
+from __future__ import print_function
+
+import six
+
 from django.core.exceptions import ValidationError
 from django.db import models, connection, transaction
 from django.db.utils import IntegrityError
@@ -16,8 +20,8 @@ from productmd import composeinfo
 class ComposeType(models.Model):
     name                = models.CharField(max_length=200, unique=True)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class ComposeAcceptanceTestingState(models.Model):
@@ -28,8 +32,8 @@ class ComposeAcceptanceTestingState(models.Model):
         """Return default acceptance testing status."""
         return ComposeAcceptanceTestingState.objects.get(name='untested').pk
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class Compose(models.Model):
@@ -52,10 +56,10 @@ class Compose(models.Model):
             ("release", "compose_date", "compose_type", "compose_respin"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         if self.compose_label:
-            return u"%s (%s)" % (self.compose_id, self.compose_label)
-        return u"%s" % self.compose_id
+            return "%s (%s)" % (self.compose_id, self.compose_label)
+        return "%s" % self.compose_id
 
     def export(self):
         return {
@@ -63,14 +67,14 @@ class Compose(models.Model):
             "compose_id": self.compose_id,
         }
 
-    def __cmp__(self, another):
+    def __lt__(self, another):
         """
         If both composes belong to the same release, they are compared by
         productmd. Otherwise they inherit the order from releases.
         """
         if self.release == another.release:
-            return cmp(self._get_compose_info(), another._get_compose_info())
-        return cmp(self.release.version_sort_key(), another.release.version_sort_key())
+            return self._get_compose_info().__cmp__(another._get_compose_info()) < 0
+        return self.release.version_sort_key() < another.release.version_sort_key()
 
     def _get_compose_info(self):
         if not hasattr(self, '_compose_info'):
@@ -186,8 +190,8 @@ class Variant(models.Model):
         )
         ordering = ("variant_uid", )
 
-    def __unicode__(self):
-        return u"%s" % (self.variant_uid, )
+    def __str__(self):
+        return "%s" % (self.variant_uid, )
 
     @property
     def arches(self):
@@ -218,8 +222,8 @@ class VariantArch(models.Model):
         )
         ordering = ("variant", "arch")
 
-    def __unicode__(self):
-        return u"%s.%s" % (self.variant, self.arch)
+    def __str__(self):
+        return "%s.%s" % (self.variant, self.arch)
 
     def export(self):
         return {
@@ -237,8 +241,8 @@ class Path(models.Model):
     """
     path = models.CharField(max_length=4096, unique=True, blank=True)
 
-    def __unicode__(self):
-        return unicode(self.path)
+    def __str__(self):
+        return str(self.path)
 
     def export(self):
         return {
@@ -271,8 +275,8 @@ class ComposeRPM(models.Model):
             ("variant_arch", "rpm"),
         )
 
-    def __unicode__(self):
-        return u"%s/%s/%s" % (self.variant_arch.variant.compose.compose_id, self.variant_arch, self.rpm)
+    def __str__(self):
+        return "%s/%s/%s" % (self.variant_arch.variant.compose.compose_id, self.variant_arch, self.rpm)
 
     @staticmethod
     def bulk_insert(cursor, variant_arch_id, rpm_id, content_category_id, sigkey_id, path_id):
@@ -375,7 +379,7 @@ class ComposeRPMMapping(object):
 
         if do_delete:
             for override in tbd:
-                print ' *** NOTICE: deleted override %s' % override
+                print(' *** NOTICE: deleted override %s' % override)
                 override.delete()
 
         return useless_overrides
@@ -383,7 +387,7 @@ class ComposeRPMMapping(object):
     def get_pure_dict(self):
         result = {}
         for variant, arch, rpm_name, rpm_data in self:
-            if isinstance(rpm_data, basestring):
+            if isinstance(rpm_data, six.string_types):
                 result.setdefault(variant, {}).setdefault(arch, {}).setdefault(rpm_name, [])
                 result[variant][arch][rpm_name].append(rpm_data)
             elif rpm_data['included']:
@@ -474,9 +478,9 @@ class OverrideRPM(models.Model):
             ("release", "variant", "arch", "rpm_name", "rpm_arch"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         include = self.include and "+" or "-"
-        return u"[%s] %s.%s %s.%s %s" % (self.release, self.variant, self.arch, self.rpm_name, self.rpm_arch, include)
+        return "[%s] %s.%s %s.%s %s" % (self.release, self.variant, self.arch, self.rpm_name, self.rpm_arch, include)
 
     def export(self):
         return {
@@ -541,8 +545,8 @@ class ComposeImage(models.Model):
             ("variant_arch", "image"),
         )
 
-    def __unicode__(self):
-        return u"%s/%s" % (self.variant_arch.variant.compose, self.image)
+    def __str__(self):
+        return "%s/%s" % (self.variant_arch.variant.compose, self.image)
 
     def export(self):
         return {
@@ -593,8 +597,8 @@ class ComposeTree(models.Model):
             ("compose", "variant", "arch", "location", "scheme"),
         )
 
-    def __unicode__(self):
-        return u"%s-%s-%s-%s" % (self.compose, self.variant, self.arch, self.location)
+    def __str__(self):
+        return "%s-%s-%s-%s" % (self.compose, self.variant, self.arch, self.location)
 
     def export(self):
         return {
@@ -611,7 +615,7 @@ class ComposeTree(models.Model):
 class PathType(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def export(self):
@@ -627,8 +631,8 @@ class ComposeRelPath(models.Model):
     arch                = models.ForeignKey("common.Arch", on_delete=models.CASCADE)
     type                = models.ForeignKey("PathType", on_delete=models.CASCADE)
 
-    def __unicode__(self):
-        return u"%s-%s-%s-%s-%s" % (self.compose, self.variant, self.arch, self.type.name, self.path)
+    def __str__(self):
+        return "%s-%s-%s-%s-%s" % (self.compose, self.variant, self.arch, self.type.name, self.path)
 
     def export(self):
         return {

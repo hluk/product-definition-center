@@ -7,6 +7,20 @@
     }
   },
   {
+    "model": "package.RPM",
+    "pk": 4,
+    "fields": {
+      "name": "bash-other",
+      "epoch": 0,
+      "version": "1.2.3",
+      "release": "5",
+      "arch": "src",
+      "srpm_name": "bash",
+      "srpm_nevra": null,
+      "filename": "bash-other-1.2.3-4.x86_64.rpm"
+    }
+  },
+  {
     "model": "compose.ComposeRPM",
     "pk": 3,
     "fields": {

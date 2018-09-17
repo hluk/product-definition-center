@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('module', '0008_unreleasedvariant_make_variant_uid_unique'),

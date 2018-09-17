@@ -32,7 +32,7 @@ class OSBSViewSet(common_viewsets.NotificationMixin,
     Currently there is just one flag tracked here:
 
      * `autorebuild`: This flag indicates whether the component should be
-       automatically rebuilt when its dependencies change. If the value in PDC
+       automatically rebuilt when its dependencies change. If the value
        is `null`, it indicates that the client should use its default value.
     """
 

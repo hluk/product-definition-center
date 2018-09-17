@@ -122,7 +122,8 @@ class OverrideRPMForm(forms.Form):
         if (cleaned_data['rpm_name'] and not cleaned_data['rpm_arch'] or
                 cleaned_data['rpm_arch'] and not cleaned_data['rpm_name']):
             raise forms.ValidationError("Both RPM name and arch must be filled in.")
-        if (cleaned_data['new_variant'] >= 0 and
+        if (cleaned_data['new_variant'] is not None and
+                cleaned_data['new_variant'] >= 0 and
                 (cleaned_data.get('variant') or cleaned_data.get('arch'))):
             raise forms.ValidationError("Can not reference both old and new variant.arch.")
         return cleaned_data

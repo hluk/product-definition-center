@@ -20,6 +20,7 @@ import operator
 from .models import Label, SigKey
 from .hacks import convert_str_to_int
 from pdc.apps.utils.utils import is_valid_regexp
+from functools import reduce
 
 SelectMultiple = widgets.SelectMultiple
 
@@ -50,13 +51,14 @@ class MultiValueFilter(django_filters.CharFilter):
     """
     field_class = MultiValueField
 
-    def __init__(self, name=None, distinct=False, **kwargs):
+    def __init__(self, field_name=None, distinct=False, **kwargs):
         kwargs.setdefault('method', self._filter)
-        super(MultiValueFilter, self).__init__(widget=SelectMultiple, name=name, distinct=distinct, **kwargs)
+        assert 'name' not in kwargs
+        super(MultiValueFilter, self).__init__(widget=SelectMultiple, field_name=field_name, distinct=distinct, **kwargs)
 
     @value_is_not_empty
     def _filter(self, qs, name, value):
-        qs = qs.filter(**{self.name + '__in': value})
+        qs = qs.filter(**{self.field_name + '__in': value})
         if self.distinct:
             qs = qs.distinct()
         return qs
@@ -72,7 +74,7 @@ class MultiValueCaseInsensitiveFilter(MultiValueFilter):
         if value:
             condition_list = []
             for val in value:
-                condition_list.append(Q(**{self.name + '__iexact': val}))
+                condition_list.append(Q(**{self.field_name + '__iexact': val}))
             qs = qs.filter(reduce(operator.or_, condition_list))
             if self.distinct:
                 qs = qs.distinct()
@@ -98,7 +100,7 @@ class MultiValueRegexFilter(MultiValueFilter):
                     raise ValidationError('At least one parameter is invalid regular expression: %s' % str(i))
             condition_list = []
             for i in value:
-                condition_list.append(Q(**{self.name + '__regex': i}))
+                condition_list.append(Q(**{self.field_name + '__regex': i}))
             qs = qs.filter(reduce(operator.or_, condition_list))
             if self.distinct:
                 qs = qs.distinct()
@@ -119,7 +121,7 @@ class MultiIntFilter(MultiValueFilter):
         """
         Get name of the filter used by the user.
         """
-        for name, filter in self.parent.filters.iteritems():
+        for name, filter in self.parent.filters.items():
             if filter == self:
                 return name
         # This should not happen, internal server error will be reported it if does.
@@ -131,7 +133,7 @@ class MultiIntFilter(MultiValueFilter):
         # @value_is_not_empty would cause the filter with empty value to be
         # ignored.
         value = [convert_str_to_int(val, name=self.display_name) for val in value]
-        qs = qs.filter(**{self.name + '__in': value})
+        qs = qs.filter(**{self.field_name + '__in': value})
         if self.distinct:
             qs = qs.distinct()
         return qs
@@ -167,6 +169,7 @@ class PDCBaseFilterSet(six.with_metaclass(ComposeFilterSetMetaclass,
 class ComposeFilterSet(PDCBaseFilterSet):
     @BaseFilterSet.qs.getter
     def qs(self):
+        # FIXME: This is unmaintainable!
         """
         Copy from django-filter BaseFilterSet, we do a little hacking for
         supporting a compose fields query.
@@ -175,7 +178,7 @@ class ComposeFilterSet(PDCBaseFilterSet):
             together_cache = dict()
             valid = self.is_bound and self.form.is_valid()
 
-            if self.strict and self.is_bound and not valid:
+            if self.is_bound and not valid:
                 self._qs = self.queryset.none()
                 return self._qs
 
@@ -218,7 +221,7 @@ class ComposeFilterSet(PDCBaseFilterSet):
                         qs = filter_.filter(qs, value)
 
             if together_cache:
-                for process_data in together_cache.itervalues():
+                for process_data in together_cache.values():
                     filter = process_data['filter']
                     value = process_data['value']
                     qs = filter.filter(qs, value)
@@ -261,16 +264,16 @@ class NullableCharFilter(django_filters.CharFilter):
 
     doc_format = 'string | null'
 
-    def __init__(self, name=None, distinct=False, **kwargs):
+    def __init__(self, field_name=None, distinct=False, **kwargs):
         kwargs.setdefault('method', self._filter)
-        super(NullableCharFilter, self).__init__(name=name, distinct=distinct, **kwargs)
+        super(NullableCharFilter, self).__init__(field_name=field_name, distinct=distinct, **kwargs)
 
     """
     Wrapper around CharFilter that allows filtering items with empty value.
     """
     def _filter(self, qs, name, value):
         if value in self.NULL_STRINGS:
-            args = {self.name + '__isnull': True}
+            args = {self.field_name + '__isnull': True}
             return qs.filter(**args)
         return super(NullableCharFilter, self).filter(qs, value)
 
@@ -287,9 +290,9 @@ class CaseInsensitiveBooleanFilter(django_filters.CharFilter):
 
     doc_format = 'bool'
 
-    def __init__(self, name=None, distinct=False, **kwargs):
+    def __init__(self, field_name=None, distinct=False, **kwargs):
         kwargs.setdefault('method', self._filter)
-        super(CaseInsensitiveBooleanFilter, self).__init__(name=name, distinct=distinct, **kwargs)
+        super(CaseInsensitiveBooleanFilter, self).__init__(field_name=field_name, distinct=distinct, **kwargs)
 
     def _validate_boolean(self, value):
         if value.lower() not in self.TRUE_STRINGS + self.FALSE_STRINGS:
@@ -300,9 +303,9 @@ class CaseInsensitiveBooleanFilter(django_filters.CharFilter):
             return qs
         self._validate_boolean(value)
         if value.lower() in self.TRUE_STRINGS:
-            qs = qs.filter(**{self.name: True})
+            qs = qs.filter(**{self.field_name: True})
         elif value.lower() in self.FALSE_STRINGS:
-            qs = qs.filter(**{self.name: False})
+            qs = qs.filter(**{self.field_name: False})
         else:
             qs = qs.none()
         if self.distinct:

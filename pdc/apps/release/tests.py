@@ -168,18 +168,22 @@ class ProductRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         self.assertEqual(2, response.data['count'])
         data = response.data['results']
         expected = [
-            {'name': u'Dummy product',
-             'short': u'dummy',
+            {'name': 'Dummy product',
+             'short': 'dummy',
              'active': False,
              'allowed_push_targets': [],
              'product_versions': []},
-            {'name': u'Test Product',
-             'short': u'product',
+            {'name': 'Test Product',
+             'short': 'product',
              'active': False,
              'allowed_push_targets': [],
              'product_versions': []},
         ]
-        self.assertEqual(sorted(data), sorted(expected))
+
+        def data_sort_key(data):
+            return data['name']
+
+        self.assertEqual(sorted(data, key=data_sort_key), sorted(expected, key=data_sort_key))
 
     def test_get_after_create(self):
         self.test_create()
@@ -592,13 +596,13 @@ class ReleaseRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         self.assertNumChanges([1])
 
     def test_create_with_bugzilla_mapping(self):
-        args = {"name": u"Fedora", "short": u"f", "version": u'20', "release_type": u"ga",
-                "bugzilla": {"product": u"Fedora Bugzilla Product"}}
+        args = {"name": "Fedora", "short": "f", "version": '20', "release_type": "ga",
+                "bugzilla": {"product": "Fedora Bugzilla Product"}}
         response = self.client.post(reverse('release-list'), args, format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         args.update({"active": True, 'allow_buildroot_push': False, 'integrated_with': None,
                      'base_product': None, 'product_version': None, 'compose_set': [],
-                     'dist_git': None, 'release_id': u'f-20', 'sigkey': 'ABCDEF',
+                     'dist_git': None, 'release_id': 'f-20', 'sigkey': 'ABCDEF',
                      'allowed_debuginfo_services': [],
                      'allowed_push_targets': []})
         self.assertEqual(ReleaseBugzillaMapping.objects.count(), 1)
@@ -625,14 +629,14 @@ class ReleaseRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 "release_type": "ga", "active": "yes please"}
         response = self.client.post(reverse('release-list'), args)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertIn(u'"yes please" is not a valid boolean', response.data['active'][0])
+        self.assertIn('"yes please" is not a valid boolean', response.data['active'][0])
 
     def test_create_with_invalid_allow_buildroot_push(self):
         args = {"name": "Fedora", "short": "f", "version": '20',
                 "release_type": "ga", "allow_buildroot_push": "wrong input"}
         response = self.client.post(reverse('release-list'), args)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertIn(u'"wrong input" is not a valid boolean', response.data['allow_buildroot_push'][0])
+        self.assertIn('"wrong input" is not a valid boolean', response.data['allow_buildroot_push'][0])
 
     def test_create_with_invalid_short(self):
         args = {"name": "Fedora", "short": "F", "version": '20', "release_type": "ga"}
@@ -947,7 +951,7 @@ class ReleaseCloneTestCase(TestCaseWithChangeSetMixin, APITestCase):
         release = models.Release.objects.latest('id')
         self.assertEqual(release.variant_set.count(), 1)
         self.assertEqual(release.variant_set.all()[0].variantarch_set.count(), 1)
-        self.assertItemsEqual(release.trees, ['Server.x86_64'])
+        self.assertCountEqual(release.trees, ['Server.x86_64'])
         self.assertNumChanges([4])
 
     def test_clone_with_explicit_empty_trees(self):
@@ -1046,12 +1050,12 @@ class ReleaseRPMMappingViewSetTestCase(APITestCase):
         "pdc/apps/common/fixtures/test/sigkey.json",
         "pdc/apps/package/fixtures/test/rpm.json",
         "pdc/apps/release/fixtures/tests/release.json",
-        "pdc/apps/compose/fixtures/tests/variant.json",
-        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/release/fixtures/tests/variant.json",
         "pdc/apps/release/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_overriderpm.json",
         "pdc/apps/compose/fixtures/tests/compose.json",
+        "pdc/apps/compose/fixtures/tests/variant.json",
+        "pdc/apps/compose/fixtures/tests/variant_arch.json",
         "pdc/apps/compose/fixtures/tests/compose_composerpm.json",
     ]
 
@@ -1270,7 +1274,7 @@ class ReleaseUpdateRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         self.assertEqual(response.data.get('product_version'), 'release-1')
         self.assertNumChanges([1, 1, 1])
         response = self.client.get(reverse('productversion-detail', args=['release-1']))
-        self.assertItemsEqual(response.data.get('releases'), ['release-1.0'])
+        self.assertCountEqual(response.data.get('releases'), ['release-1.0'])
 
     def test_update_to_change_release_id(self):
         response = self.client.patch(self.url, {'release_type': 'eus'}, format='json')
@@ -1481,15 +1485,15 @@ class ReleaseComposeLinkingTestCase(APITestCase):
     def test_linking_visible_in_rest(self):
         response = self.client.get(reverse('release-detail', args=['product-1.0-eus']))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.get('compose_set'),
+        self.assertCountEqual(response.data.get('compose_set'),
                               ['compose-1'])
         response = self.client.get(reverse('release-detail', args=['product-1.0']))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.get('compose_set'),
+        self.assertCountEqual(response.data.get('compose_set'),
                               ['compose-1', 'compose-2'])
         response = self.client.get(reverse('release-detail', args=['product-1.0-updates']))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.get('compose_set'),
+        self.assertCountEqual(response.data.get('compose_set'),
                               ['compose-1', 'compose-2'])
 
     def test_deleted_compose_does_not_show_up(self):
@@ -1499,25 +1503,25 @@ class ReleaseComposeLinkingTestCase(APITestCase):
 
         response = self.client.get(reverse('release-detail', args=['product-1.0-eus']))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.get('compose_set'), [])
+        self.assertCountEqual(response.data.get('compose_set'), [])
 
         response = self.client.get(reverse('release-detail', args=['product-1.0-updates']))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.get('compose_set'), ['compose-2'])
+        self.assertCountEqual(response.data.get('compose_set'), ['compose-2'])
 
     def test_linking_visible_in_web_ui(self):
         client = Client()
         response = client.get('/compose/1/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('product-1.0', str(response))
-        self.assertIn('product-1.0-updates', str(response))
-        self.assertIn('product-1.0-eus', str(response))
+        self.assertIn(b'product-1.0', response.content)
+        self.assertIn(b'product-1.0-updates', response.content)
+        self.assertIn(b'product-1.0-eus', response.content)
 
         response = client.get('/compose/2/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('product-1.0', str(response))
-        self.assertIn('product-1.0-updates', str(response))
-        self.assertNotIn('product-1.0-eus', str(response))
+        self.assertIn(b'product-1.0', response.content)
+        self.assertIn(b'product-1.0-updates', response.content)
+        self.assertNotIn(b'product-1.0-eus', response.content)
 
     def test_release_rpm_mapping_only_includes_variants_from_release(self):
         response = self.client.get(reverse('releaserpmmapping-detail',
@@ -1572,7 +1576,7 @@ class ReleaseImportTestCase(TestCaseWithChangeSetMixin, APITestCase):
                               'allowed_debuginfo_services': [],
                               'allowed_push_targets': []})
         release = models.Release.objects.get(release_id='tp-1.0')
-        self.assertItemsEqual(release.trees,
+        self.assertCountEqual(release.trees,
                               ['Client.x86_64', 'Server.x86_64', 'Server.s390x',
                                'Server.ppc64', 'Server-SAP.x86_64'])
         self.assertEqual(release.variant_set.get(variant_uid='Server-SAP').integrated_from.release_id,
@@ -1596,7 +1600,7 @@ class ReleaseImportTestCase(TestCaseWithChangeSetMixin, APITestCase):
                               'allowed_debuginfo_services': [],
                               'allowed_push_targets': []})
         release = models.Release.objects.get(release_id='sap-1.0@tp-1')
-        self.assertItemsEqual(release.trees, ['Server-SAP.x86_64'])
+        self.assertCountEqual(release.trees, ['Server-SAP.x86_64'])
         self.assertEqual(release.variant_set.get(variant_uid='Server-SAP').integrated_to.release_id,
                          'tp-1.0')
 
@@ -1627,8 +1631,8 @@ class ReleaseImportTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
         response = self.client.post(reverse('releaseimportcomposeinfo-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('version mismatch', response.content)
-        self.assertIn('sap-1.0@tp-1', response.content)
+        self.assertIn(b'version mismatch', response.content)
+        self.assertIn(b'sap-1.0@tp-1', response.content)
 
 
 class ReleaseTypeTestCase(TestCaseWithChangeSetMixin, APITestCase):
@@ -1786,11 +1790,11 @@ class VariantRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     def test_update(self):
         args = {
-            'uid': u'Workstation-UID',
-            'id': u'Workstation',
-            'release': u'release-1.0',
-            'name': u'Workstation variant',
-            'type': u'variant',
+            'uid': 'Workstation-UID',
+            'id': 'Workstation',
+            'release': 'release-1.0',
+            'name': 'Workstation variant',
+            'type': 'variant',
             'arches': ['ppc64', 'x86_64'],
             'variant_version': None,
             'variant_release': None,
@@ -1799,7 +1803,7 @@ class VariantRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.put(reverse('variant-detail', args=['release-1.0/Server-UID']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual(response.data.pop('arches'), args.pop('arches'))
+        self.assertCountEqual(response.data.pop('arches'), args.pop('arches'))
         self.assertDictEqual(dict(response.data), args)
         self.assertNumChanges([1])
 
@@ -1924,7 +1928,7 @@ class VariantRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
             'variant_release': None,
             'allowed_push_targets': [],
         }
-        self.assertItemsEqual(response.data.pop('arches'), ['x86_64', 'ppc64'])
+        self.assertCountEqual(response.data.pop('arches'), ['x86_64', 'ppc64'])
         self.assertDictEqual(dict(response.data), expected)
 
     def test_retrieve_non_existing(self):
@@ -2187,9 +2191,9 @@ class VariantCPERESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     fixtures = [
+        "pdc/apps/release/fixtures/tests/release.json",
         "pdc/apps/release/fixtures/tests/release_group_types.json",
         "pdc/apps/release/fixtures/tests/release_groups.json",
-        "pdc/apps/release/fixtures/tests/release.json"
     ]
 
     def test_list(self):
@@ -2200,60 +2204,60 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     def test_retrieve_with_name(self):
         response = self.client.get(reverse("releasegroups-detail", args=["rhel_test"]))
-        expect_result = {'active': True, 'type': u'Async',
-                         'name': u'rhel_test', 'releases': [u'release-1.0'],
-                         'description': u'test'}
+        expect_result = {'active': True, 'type': 'Async',
+                         'name': 'rhel_test', 'releases': ['release-1.0'],
+                         'description': 'test'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, expect_result)
 
     def test_override_ordering_by_description_key(self):
         response = self.client.get(reverse("releasegroups-list"), format='json')
-        expect_result = {'active': True, 'type': u'Async',
-                         'name': u'rhel_test', 'releases': [u'release-1.0'],
-                         'description': u'test'}
+        expect_result = {'active': True, 'type': 'Async',
+                         'name': 'rhel_test', 'releases': ['release-1.0'],
+                         'description': 'test'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEquals(response.data.get('results')[0], expect_result)
+        self.assertEqual(response.data.get('results')[0], expect_result)
         response1 = self.client.get(reverse("releasegroups-list"), {'ordering': 'description'},
                                     format='json')
-        expect_result1 = {'active': True, 'type': u'QuarterlyUpdate',
-                          'name': u'rhel_test1', 'releases': [u'release-1.0'],
-                          'description': u'good'}
+        expect_result1 = {'active': True, 'type': 'QuarterlyUpdate',
+                          'name': 'rhel_test1', 'releases': ['release-1.0'],
+                          'description': 'good'}
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
-        self.assertEquals(response1.data.get('results')[0], expect_result1)
+        self.assertEqual(response1.data.get('results')[0], expect_result1)
 
     def test_override_ordering_with_both_character(self):
         response = self.client.get(reverse("releasegroups-list"), format='json')
-        expect_result = {'active': True, 'type': u'Async',
-                         'name': u'rhel_test', 'releases': [u'release-1.0'],
-                         'description': u'test'}
+        expect_result = {'active': True, 'type': 'Async',
+                         'name': 'rhel_test', 'releases': ['release-1.0'],
+                         'description': 'test'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data.get('results')[0], expect_result)
+        self.assertEqual(response.data.get('results')[0], expect_result)
 
         url = reverse("releasegroups-list")
         response = self.client.get(url + '?ordering=type,-description')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data.get('results')[0], expect_result)
+        self.assertEqual(response.data.get('results')[0], expect_result)
 
         response = self.client.get(url + '?ordering=description,-type')
-        expect_result = {'active': True, 'type': u'QuarterlyUpdate',
-                         'name': u'rhel_test1', 'releases': [u'release-1.0'],
-                         'description': u'good'}
+        expect_result = {'active': True, 'type': 'QuarterlyUpdate',
+                         'name': 'rhel_test1', 'releases': ['release-1.0'],
+                         'description': 'good'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data.get('results')[0], expect_result)
+        self.assertEqual(response.data.get('results')[0], expect_result)
 
     def test_retrieve_with_description_para(self):
         response = self.client.get(reverse("releasegroups-detail", args=["rhel_test"]),
                                    args={'description': 'good'}, format='json')
-        expect_result = {'active': True, 'type': u'Async',
-                         'name': u'rhel_test', 'releases': [u'release-1.0'],
-                         'description': u'test'}
+        expect_result = {'active': True, 'type': 'Async',
+                         'name': 'rhel_test', 'releases': ['release-1.0'],
+                         'description': 'test'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, expect_result)
 
     def test_create(self):
         args = {'type': 'Zstream', 'name': 'test', 'description': 'test_create',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -2261,19 +2265,19 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     def test_create_without_name(self):
         args = {'type': 'Zstream', 'description': 'test_create',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_with_duplicate_name(self):
         args = {'type': 'Zstream', 'name': 'test', 'description': 'test_create',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         args = {'type': 'QuarterlyUpdate', 'name': 'test', 'description': 'test',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -2287,29 +2291,29 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     def test_create_without_type(self):
         args = {'name': 'test', 'description': 'test_create',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_without_description(self):
-        args = {'type': 'Zstream', 'name': 'test', 'releases': [u'release-1.0']}
+        args = {'type': 'Zstream', 'name': 'test', 'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_with_error_key(self):
         args = {'Error_key': 'test', 'type': 'Zstream', 'name': 'test', 'description': 'test_create',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_bulk_create(self):
         args1 = {'type': 'Zstream', 'name': 'test_bulk1', 'description': 'test1',
-                 'releases': [u'release-1.0']}
+                 'releases': ['release-1.0']}
         args2 = {'type': 'Zstream', 'name': 'test_bulk2', 'description': 'test2',
-                 'releases': [u'release-1.0']}
+                 'releases': ['release-1.0']}
         args = [args1, args2]
         url = reverse("releasegroups-list")
         response = self.client.post(url, args, format='json')
@@ -2318,7 +2322,7 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
     def test_update(self):
         args = {'type': 'QuarterlyUpdate', 'name': 'test_update', 'description': 'good',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         response = self.client.put(reverse("releasegroups-detail", args=['rhel_test']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -2335,7 +2339,7 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     def test_update_without_type(self):
         self.test_create()
         args = {'name': 'test_update', 'description': 'good',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         response = self.client.put(reverse("releasegroups-detail", args=['test']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -2343,7 +2347,7 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     def test_update_without_name(self):
         self.test_create()
         args = {'type': 'QuarterlyUpdate', 'description': 'good',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         response = self.client.put(reverse("releasegroups-detail", args=['test']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -2351,14 +2355,14 @@ class ReleaseGroupRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
     def test_update_without_description(self):
         self.test_create()
         args = {'type': 'QuarterlyUpdate', 'name': 'test_update',
-                'releases': [u'release-1.0']}
+                'releases': ['release-1.0']}
         response = self.client.put(reverse("releasegroups-detail", args=['test']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_with_error_release(self):
         args = {'type': 'QuarterlyUpdate', 'name': 'test_update', 'description': 'good',
-                'releases': [u'release']}
+                'releases': ['release']}
         response = self.client.put(reverse("releasegroups-detail", args=['rhel_test']),
                                    args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -2665,12 +2669,12 @@ class AllowedPushTargetsRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 'allowed_push_targets': ['rhn-qa']}
         response = self.client.post(reverse('productversion-list'), args)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertEqual(response.data.get('detail'), ["Push targets must be allowed in parent product: [u'rhn-qa']"])
+        self.assertEqual(response.data.get('detail'), ["Push targets must be allowed in parent product: rhn-qa"])
         self.assertNumChanges([])
 
     def test_patch_bad_variant_allowed_push_targets(self):
         args = {'allowed_push_targets': ['rhn-live', 'rhn-qa']}
         response = self.client.patch(reverse('variant-detail', args=['product-1.0/Server']), args, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data.get('detail'), ["Push targets must be allowed in parent release: [u'rhn-qa']"])
+        self.assertEqual(response.data.get('detail'), ["Push targets must be allowed in parent release: rhn-qa"])
         self.assertNumChanges([])

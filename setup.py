@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import six
+
 from setuptools import setup, find_packages
 
 from pdc import get_version
@@ -7,8 +9,8 @@ from pdc import get_version
 
 PACKAGE_NAME = 'pdc'
 PACKAGE_VER = get_version()
-PACKAGE_DESC = 'PDC - Product Definition Center'
-PACKAGE_URL = 'https://github.com/product-definition-center/product-definition-center.git'  # noqa
+PACKAGE_DESC = 'CDP - Configuration Database. Period!'
+PACKAGE_URL = 'https://gitlab.cee.redhat.com/pdc/pdc-server'
 
 
 def get_install_requires():
@@ -16,6 +18,15 @@ def get_install_requires():
     links = []
     for line in open('requirements/production.txt', 'r'):
         line = line.strip()
+
+        if line.endswith("; python_version >= '3'") and not six.PY3:
+            continue
+
+        if line.endswith("; python_version < '3'") and six.PY3:
+            continue
+
+        line = line.split(';')[0]
+
         if not line.startswith('#'):
             parts = line.split('#egg=')
             if len(parts) == 2:
@@ -34,7 +45,7 @@ setup(
     version=PACKAGE_VER,
     description=PACKAGE_DESC,
     url=PACKAGE_URL,
-    author='PDC Devel Team',
+    author='CDP Devel Team',
     author_email='pdc-dev-list@redhat.com',
     packages=find_packages(),
     include_package_data=True,

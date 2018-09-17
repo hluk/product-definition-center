@@ -4,10 +4,10 @@
 # http://opensource.org/licenses/MIT
 #
 """
-Extra Django settings for test environment of pdc project.
+Extra Django settings for test environment of PDC project.
 """
 
-from settings_common import *
+from .settings_common import *
 
 
 # Database settings

@@ -3,13 +3,13 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import absolute_import
 
 import itertools
 import json
 import logging
+import six
 import threading
-import Queue
+from six.moves import queue
 
 from django.conf import settings
 
@@ -28,7 +28,7 @@ class RHMsgMessenger(BaseMessenger):
             urls=settings.MESSAGE_BUS['URLS'],
             timeout=settings.MESSAGE_BUS.get('CONNECTION_TIMEOUT'),
         )
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.worker = threading.Thread(target=self._worker)
         self.worker.daemon = True
         self.worker.start()
@@ -40,8 +40,8 @@ class RHMsgMessenger(BaseMessenger):
         """
         headers = {}
         for prefix, obj in (('', msg), ('DATA:', msg.get('new_value', {}))):
-            for key, value in obj.iteritems():
-                if isinstance(value, (basestring, int, bool)) or value is None:
+            for key, value in obj.items():
+                if isinstance(value, six.string_types) or isinstance(value, (int, bool)) or value is None:
                     headers[prefix + key] = value
 
         return headers

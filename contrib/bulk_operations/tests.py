@@ -96,7 +96,7 @@ class BulkOperationTestCase(unittest.TestCase):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         self.viewset.counter = 0
-        self.viewset.destroy = MethodType(view, self.viewset, mock.Mock)
+        self.viewset.destroy = MethodType(view, self.viewset)
         self.request.data = ['foo', 'bar', 'baz', 'quux']
         with mock.patch('logging.getLogger') as getLogger:
             response = bulk.bulk_destroy_impl(self.viewset, self.request)
@@ -151,7 +151,7 @@ class BulkOperationTestCase(unittest.TestCase):
             return Response(status=status.HTTP_200_OK)
 
         self.viewset.counter = 0
-        self.viewset.update = MethodType(view, self.viewset, mock.Mock)
+        self.viewset.update = MethodType(view, self.viewset)
         self.request.data = {'foo': {'key': 'val1'}, 'bar': {'key': 'val2'}, 'baz': {'key': 'val3'}}
         with mock.patch('logging.getLogger') as getLogger:
             response = bulk.bulk_update_impl(self.viewset, self.request)

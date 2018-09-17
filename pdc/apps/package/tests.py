@@ -281,37 +281,37 @@ class RPMDepsFilterAPITestCase(APITestCase):
     def test_filter_with_version_equality_requires(self):
         response = self.client.get(reverse('rpms-list'), {'requires': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     def test_filter_with_version_equality_suggests(self):
         response = self.client.get(reverse('rpms-list'), {'suggests': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     def test_filter_with_version_equality_obsoletes(self):
         response = self.client.get(reverse('rpms-list'), {'obsoletes': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     def test_filter_with_version_equality_recommends(self):
         response = self.client.get(reverse('rpms-list'), {'recommends': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     def test_filter_with_version_equality_provides(self):
         response = self.client.get(reverse('rpms-list'), {'provides': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     def test_filter_with_version_equality_conflicts(self):
         response = self.client.get(reverse('rpms-list'), {'conflicts': 'pkg=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 8, 9, 11, 13]])
 
     #
@@ -321,37 +321,37 @@ class RPMDepsFilterAPITestCase(APITestCase):
     def test_filter_with_greater_version_requires(self):
         response = self.client.get(reverse('rpms-list'), {'requires': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_version_suggests(self):
         response = self.client.get(reverse('rpms-list'), {'suggests': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_version_obsoletes(self):
         response = self.client.get(reverse('rpms-list'), {'obsoletes': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_version_recommends(self):
         response = self.client.get(reverse('rpms-list'), {'recommends': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_version_provides(self):
         response = self.client.get(reverse('rpms-list'), {'provides': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_version_conflicts(self):
         response = self.client.get(reverse('rpms-list'), {'conflicts': 'pkg>2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 7, 9, 10, 11, 12, 13, 14]])
 
     #
@@ -361,37 +361,37 @@ class RPMDepsFilterAPITestCase(APITestCase):
     def test_filter_with_lesser_version_requires(self):
         response = self.client.get(reverse('rpms-list'), {'requires': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     def test_filter_with_lesser_version_suggests(self):
         response = self.client.get(reverse('rpms-list'), {'suggests': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     def test_filter_with_lesser_version_obsoletes(self):
         response = self.client.get(reverse('rpms-list'), {'obsoletes': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     def test_filter_with_lesser_version_recommends(self):
         response = self.client.get(reverse('rpms-list'), {'recommends': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     def test_filter_with_lesser_version_provides(self):
         response = self.client.get(reverse('rpms-list'), {'provides': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     def test_filter_with_lesser_version_conflicts(self):
         response = self.client.get(reverse('rpms-list'), {'conflicts': 'pkg<2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 6, 8, 11, 13]])
 
     #
@@ -401,37 +401,37 @@ class RPMDepsFilterAPITestCase(APITestCase):
     def test_filter_with_greater_or_equal_version_requires(self):
         response = self.client.get(reverse('rpms-list'), {'requires': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_or_equal_version_suggests(self):
         response = self.client.get(reverse('rpms-list'), {'suggests': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_or_equal_version_recommends(self):
         response = self.client.get(reverse('rpms-list'), {'recommends': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_or_equal_version_obsoletes(self):
         response = self.client.get(reverse('rpms-list'), {'obsoletes': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_or_equal_version_provides(self):
         response = self.client.get(reverse('rpms-list'), {'provides': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     def test_filter_with_greater_or_equal_version_conflicts(self):
         response = self.client.get(reverse('rpms-list'), {'conflicts': 'pkg>=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]])
 
     #
@@ -441,37 +441,37 @@ class RPMDepsFilterAPITestCase(APITestCase):
     def test_filter_with_lesser_or_equal_version_requires(self):
         response = self.client.get(reverse('rpms-list'), {'requires': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
     def test_filter_with_lesser_or_equal_version_suggests(self):
         response = self.client.get(reverse('rpms-list'), {'suggests': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
     def test_filter_with_lesser_or_equal_version_recommends(self):
         response = self.client.get(reverse('rpms-list'), {'recommends': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
     def test_filter_with_lesser_or_equal_version_provides(self):
         response = self.client.get(reverse('rpms-list'), {'provides': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
     def test_filter_with_lesser_or_equal_version_conflicts(self):
         response = self.client.get(reverse('rpms-list'), {'conflicts': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
     def test_filter_with_lesser_or_equal_version_obsoletes(self):
         response = self.client.get(reverse('rpms-list'), {'obsoletes': 'pkg<=2.0'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertItemsEqual([pkg['name'] for pkg in response.data['results']],
+        self.assertEqual([pkg['name'] for pkg in response.data['results']],
                               ['test-{}'.format(i) for i in [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 13]])
 
 
@@ -677,9 +677,9 @@ class RPMDepsAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
         'pdc/apps/release/fixtures/tests/release.json',
         'pdc/apps/package/fixtures/test/rpm.json',
         'pdc/apps/compose/fixtures/tests/compose.json',
-        'pdc/apps/compose/fixtures/tests/compose_composerpm.json',
+        'pdc/apps/compose/fixtures/tests/variant.json',
         'pdc/apps/compose/fixtures/tests/variant_arch.json',
-        'pdc/apps/compose/fixtures/tests/variant.json'
+        'pdc/apps/compose/fixtures/tests/compose_composerpm.json',
     ]
 
     def setUp(self):
@@ -891,9 +891,9 @@ class RPMAPIRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         'pdc/apps/package/fixtures/test/release.json',
         'pdc/apps/package/fixtures/test/rpm2.json',
         'pdc/apps/compose/fixtures/tests/compose.json',
-        'pdc/apps/compose/fixtures/tests/compose_composerpm.json',
+        'pdc/apps/compose/fixtures/tests/variant.json',
         'pdc/apps/compose/fixtures/tests/variant_arch.json',
-        'pdc/apps/compose/fixtures/tests/variant.json'
+        'pdc/apps/compose/fixtures/tests/compose_composerpm.json',
     ]
 
     def setUp(self):
@@ -1149,13 +1149,13 @@ class RPMAPIRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('rpms-detail', args=[1])
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data.update({'id': 1, 'linked_composes': [u'compose-1'], 'dependencies': self.empty_deps})
+        data.update({'id': 1, 'linked_composes': ['compose-1'], 'dependencies': self.empty_deps})
         self.assertDictEqual(dict(response.data), data)
         self.assertNumChanges([1])
 
     def test_update_rpm_with_linked_compose_should_read_only(self):
         url = reverse('rpms-detail', args=[3])
-        data = {'linked_composes': [u'compose-1']}
+        data = {'linked_composes': ['compose-1']}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertNumChanges([])
@@ -1212,8 +1212,8 @@ class ImageRESTTestCase(APITestCase):
     fixtures = [
         'pdc/apps/release/fixtures/tests/release.json',
         'pdc/apps/compose/fixtures/tests/compose.json',
-        'pdc/apps/compose/fixtures/tests/variant_arch.json',
         'pdc/apps/compose/fixtures/tests/variant.json',
+        'pdc/apps/compose/fixtures/tests/variant_arch.json',
         'pdc/apps/package/fixtures/test/image.json',
         'pdc/apps/compose/fixtures/tests/compose_composeimage.json',
     ]
@@ -1385,28 +1385,28 @@ class ImageRESTTestCase(APITestCase):
         value = 'wrongvalue'
         response = self.client.get(reverse('image-list'), {key: value})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"detail": [u'Value [%s] of %s is not an integer' % (value, key)]})
+        self.assertEqual(response.data, {"detail": ['Value [%s] of %s is not an integer' % (value, key)]})
 
     def test_query_disc_count_with_wrong_value(self):
         key = 'disc_count'
         value = 'wrongvalue'
         response = self.client.get(reverse('image-list'), {key: value})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"detail": [u'Value [%s] of %s is not an integer' % (value, key)]})
+        self.assertEqual(response.data, {"detail": ['Value [%s] of %s is not an integer' % (value, key)]})
 
     def test_query_mtime_with_wrong_value(self):
         key = 'mtime'
         value = 'wrongvalue'
         response = self.client.get(reverse('image-list'), {key: value})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"detail": [u'Value [%s] of %s is not an integer' % (value, key)]})
+        self.assertEqual(response.data, {"detail": ['Value [%s] of %s is not an integer' % (value, key)]})
 
     def test_query_size_with_wrong_value(self):
         key = 'size'
         value = 'wrongvalue'
         response = self.client.get(reverse('image-list'), {key: value})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"detail": [u'Value [%s] of %s is not an integer' % (value, key)]})
+        self.assertEqual(response.data, {"detail": ['Value [%s] of %s is not an integer' % (value, key)]})
 
     def test_subvariant_default_empty_string(self):
         image = models.Image.objects.get(file_name='image-3')
@@ -1481,7 +1481,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNumChanges([1])
-        self.assertIn('bash-doc', response.content)
+        self.assertIn(b'bash-doc', response.content)
 
     def test_create_with_exist_rpm_nevra(self):
         url = reverse('buildimage-list')
@@ -1500,7 +1500,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNumChanges([1])
-        self.assertIn('bash-doc', response.content)
+        self.assertIn(b'bash-doc', response.content)
 
     def test_create_with_new_archives(self):
         url = reverse('buildimage-list')
@@ -1552,7 +1552,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNumChanges([1])
-        self.assertIn('bash-doc', response.content)
+        self.assertIn(b'bash-doc', response.content)
 
     def test_create_with_wrong_field(self):
         url = reverse('buildimage-list')
@@ -1565,8 +1565,8 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('archives', response.content)
-        self.assertIn('build_nvr', response.content)
+        self.assertIn(b'archives', response.content)
+        self.assertIn(b'build_nvr', response.content)
 
     def test_create_with_exist_rpms_missing_fields(self):
         url = reverse('buildimage-list')
@@ -1577,11 +1577,11 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 'archives': []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('rpms', response.content)
-        self.assertIn('epoch', response.content)
-        self.assertIn('version', response.content)
-        self.assertIn('release', response.content)
-        self.assertIn('arch', response.content)
+        self.assertIn(b'rpms', response.content)
+        self.assertIn(b'epoch', response.content)
+        self.assertIn(b'version', response.content)
+        self.assertIn(b'release', response.content)
+        self.assertIn(b'arch', response.content)
 
     def test_create_with_new_rpms_missing_fields(self):
         url = reverse('buildimage-list')
@@ -1592,11 +1592,11 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 'archives': []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('rpms', response.content)
-        self.assertIn('epoch', response.content)
-        self.assertIn('version', response.content)
-        self.assertIn('release', response.content)
-        self.assertIn('arch', response.content)
+        self.assertIn(b'rpms', response.content)
+        self.assertIn(b'epoch', response.content)
+        self.assertIn(b'version', response.content)
+        self.assertIn(b'release', response.content)
+        self.assertIn(b'arch', response.content)
 
     def test_create_with_new_rpms_missing_non_unique_fields(self):
         url = reverse('buildimage-list')
@@ -1608,8 +1608,8 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 'archives': []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('rpms', response.content)
-        self.assertIn('srpm_name', response.content)
+        self.assertIn(b'rpms', response.content)
+        self.assertIn(b'srpm_name', response.content)
 
     def test_create_with_exist_archives_missing_fields(self):
         url = reverse('buildimage-list')
@@ -1621,9 +1621,9 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('archives', response.content)
-        self.assertIn('name', response.content)
-        self.assertIn('size', response.content)
+        self.assertIn(b'archives', response.content)
+        self.assertIn(b'name', response.content)
+        self.assertIn(b'size', response.content)
 
     def test_create_with_new_archives_missing_fields(self):
         url = reverse('buildimage-list')
@@ -1635,9 +1635,9 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('archives', response.content)
-        self.assertIn('name', response.content)
-        self.assertIn('size', response.content)
+        self.assertIn(b'archives', response.content)
+        self.assertIn(b'name', response.content)
+        self.assertIn(b'size', response.content)
 
     def test_create_with_new_archives_missing_non_unique_field(self):
         url = reverse('buildimage-list')
@@ -1649,8 +1649,8 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('archives', response.content)
-        self.assertIn('md5', response.content)
+        self.assertIn(b'archives', response.content)
+        self.assertIn(b'md5', response.content)
 
     def test_get(self):
         url = reverse('buildimage-detail', args=[1])
@@ -1694,7 +1694,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.get(url + '?component_name=bash', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 1)
-        self.assertIn('kernel', response.content)
+        self.assertIn(b'kernel', response.content)
 
     def test_query_component_name_without_srpm_name_mapping(self):
         rpm = models.RPM.objects.create(
@@ -1718,7 +1718,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         response = self.client.get(url + '?component_name=kernel', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 1)
-        self.assertIn('kernel', response.content)
+        self.assertIn(b'kernel', response.content)
 
     def test_query_with_rpm_version(self):
         url = reverse('buildimage-list')
@@ -1835,7 +1835,7 @@ class BuildImageRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNumChanges([3])
-        self.assertIn('new_rpm', response.content)
+        self.assertIn(b'new_rpm', response.content)
 
     def test_delete(self):
         url = reverse('buildimage-detail', args=[1])
@@ -1905,7 +1905,7 @@ class BuildImageRTTTestsRESTTestCase(TestCaseWithChangeSetMixin, APITestCase):
         url = reverse('buildimagertttests-list')
         data = {'build_nvr': 'fake_nvr', 'format': 'iso', 'test_result': 'untested'}
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.data, {u'detail': u'Method "POST" not allowed.'})
+        self.assertEqual(response.data, {'detail': 'Method "POST" not allowed.'})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_build_image_test_result_should_not_be_deleted(self):

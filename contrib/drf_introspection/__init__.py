@@ -28,7 +28,7 @@ def get_allowed_query_params(view):
     filter_class = getattr(view, 'filter_class', None)
     if filter_class:
         filter_set = filter_class()
-        allowed_keys.update(filter_set.filters.keys())
+        allowed_keys.update(list(filter_set.filters.keys()))
     # Take filters if no filter set is used.
     allowed_keys.update(getattr(view.__class__, 'filter_fields', []))
     # Take extra params specified on viewset.

@@ -17,8 +17,8 @@ class Service(models.Model):
     name          = models.CharField(max_length=50, unique=True)
     description   = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     CACHE = {}
 
@@ -40,8 +40,8 @@ class ContentFormat(models.Model):
     pdc_endpoint = models.CharField(max_length=200, null=True)
     description   = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class ContentCategory(models.Model):
@@ -49,8 +49,8 @@ class ContentCategory(models.Model):
     name          = models.CharField(max_length=50, unique=True)
     description   = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     CACHE = {}
 
@@ -65,8 +65,8 @@ class RepoFamily(models.Model):
     name          = models.CharField(max_length=50, unique=True)
     description   = models.CharField(max_length=200)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class RepoManager(models.Manager):
@@ -97,8 +97,8 @@ class Repo(models.Model):
         unique_together = ("variant_arch", "service", "repo_family", "content_format", "content_category", "name", "shadow")
         ordering = ["name"]
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self):
         return {
@@ -125,13 +125,13 @@ class PushTarget(models.Model):
     name = models.CharField(max_length=100, blank=False, db_index=True, unique=True)
     description = models.CharField(max_length=300, blank=True)
     host = models.URLField(max_length=255, blank=True)
-    service = models.ForeignKey(Service)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["name"]
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self):
         return {
@@ -143,9 +143,9 @@ class PushTarget(models.Model):
 
 
 class MultiDestination(models.Model):
-    global_component = models.ForeignKey('component.GlobalComponent')
-    origin_repo = models.ForeignKey(Repo, related_name='origin_repo')
-    destination_repo = models.ForeignKey(Repo, related_name='destination_repo')
+    global_component = models.ForeignKey('component.GlobalComponent', on_delete=models.CASCADE)
+    origin_repo = models.ForeignKey(Repo, related_name='origin_repo', on_delete=models.CASCADE)
+    destination_repo = models.ForeignKey(Repo, related_name='destination_repo', on_delete=models.CASCADE)
     subscribers = models.ManyToManyField('contact.Person', blank=True)
     active = models.BooleanField(default=True)
 
@@ -153,8 +153,8 @@ class MultiDestination(models.Model):
         unique_together = ('global_component', 'origin_repo', 'destination_repo')
         ordering = ['global_component']
 
-    def __unicode__(self):
-        return u"%s, %s -> %s" % (
+    def __str__(self):
+        return "%s, %s -> %s" % (
             self.global_component.name, self.origin_repo.name, self.destination_repo.name)
 
     def export(self):

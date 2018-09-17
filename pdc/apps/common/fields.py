@@ -28,8 +28,9 @@ class ChoiceSlugField(serializers.SlugRelatedField):
         try:
             return self.queryset.get(**{self.slug_field: data})
         except ObjectDoesNotExist:
-            opts = ["'" + getattr(obj, self.slug_field) + "'"
-                    for obj in self.queryset.all()]
+            opts = sorted(
+                "'" + getattr(obj, self.slug_field) + "'"
+                for obj in self.queryset.all())
             raise serializers.ValidationError(self.error_messages['does_not_exist'] %
                                               (smart_text(data), ', '.join(opts)))
         except (TypeError, ValueError):

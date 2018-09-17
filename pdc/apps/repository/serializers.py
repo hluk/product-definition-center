@@ -99,7 +99,7 @@ class RepoField(serializers.RelatedField):
         if not isinstance(data, dict):
             raise serializers.ValidationError({'detail': "Input [%s] must be a dict." % data})
 
-        if data.keys() != ['id']:
+        if list(data.keys()) != ['id']:
             raise serializers.ValidationError({'detail': 'Only accepts {"id":"int"}'})
 
         repo_id = convert_str_to_int(data['id'])

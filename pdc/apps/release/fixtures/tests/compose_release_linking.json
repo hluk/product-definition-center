@@ -6,127 +6,7 @@
     "model": "compose.composetype",
     "pk": 1
   },
-  {
-    "fields": {
-      "compose_id": "compose-1",
-      "acceptance_testing": 1,
-      "compose_label": null,
-      "deleted": false,
-      "compose_respin": 0,
-      "compose_date": "2015-02-19",
-      "linked_releases": [
-        3,
-        2
-      ],
-      "compose_type": 1,
-      "release": 1,
-      "dt_imported": "2015-02-19T09:56:56.133Z"
-    },
-    "model": "compose.compose",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "compose_id": "compose-2",
-      "acceptance_testing": 1,
-      "compose_label": null,
-      "deleted": false,
-      "compose_respin": 0,
-      "compose_date": "2015-02-18",
-      "linked_releases": [
-        2
-      ],
-      "compose_type": 1,
-      "release": 1,
-      "dt_imported": "2015-02-19T09:58:33.646Z"
-    },
-    "model": "compose.compose",
-    "pk": 2
-  },
-  {
-    "fields": {
-      "variant_id": "Server",
-      "variant_uid": "Server",
-      "variant_type": 1,
-      "deleted": false,
-      "variant_name": "Server",
-      "compose": 1
-    },
-    "model": "compose.variant",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "variant_id": "Client",
-      "variant_uid": "Client",
-      "variant_type": 1,
-      "deleted": false,
-      "variant_name": "Client",
-      "compose": 1
-    },
-    "model": "compose.variant",
-    "pk": 2
-  },
-  {
-    "fields": {
-      "variant": 2,
-      "arch": 47,
-      "deleted": false
-    },
-    "model": "compose.variantarch",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "variant": 1,
-      "arch": 47,
-      "deleted": false
-    },
-    "model": "compose.variantarch",
-    "pk": 2
-  },
-  {
-    "fields": {
-      "variant": 1,
-      "arch": 46,
-      "deleted": false
-    },
-    "model": "compose.variantarch",
-    "pk": 3
-  },
-  {
-    "fields": {
-      "content_category": 1,
-      "sigkey": null,
-      "rpm": 1,
-      "variant_arch": 3,
-      "path": 1
-    },
-    "model": "compose.composerpm",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "content_category": 1,
-      "sigkey": null,
-      "rpm": 1,
-      "variant_arch": 2,
-      "path": 2
-    },
-    "model": "compose.composerpm",
-    "pk": 2
-  },
-  {
-    "fields": {
-      "content_category": 1,
-      "sigkey": null,
-      "rpm": 1,
-      "variant_arch": 1,
-      "path": 3
-    },
-    "model": "compose.composerpm",
-    "pk": 3
-  },
+
   {
     "model": "compose.path",
     "pk": 1,
@@ -148,21 +28,7 @@
         "path": "third/path"
     }
   },
-  {
-    "fields": {
-      "rpm_name": "bash-doc",
-      "comment": "",
-      "rpm_arch": "x86_64",
-      "variant": "Server",
-      "srpm_name": "bash",
-      "do_not_delete": false,
-      "release": 3,
-      "include": true,
-      "arch": "x86_64"
-    },
-    "model": "compose.overriderpm",
-    "pk": 1
-  },
+
   {
     "fields": {
       "arch": "x86_64",
@@ -176,6 +42,7 @@
     "model": "package.rpm",
     "pk": 1
   },
+
   {
     "fields": {
       "suffix": "",
@@ -203,6 +70,7 @@
     "model": "release.releasetype",
     "pk": 3
   },
+
   {
     "fields": {
       "release_type": 1,
@@ -245,6 +113,23 @@
     "model": "release.release",
     "pk": 3
   },
+
+  {
+    "fields": {
+      "rpm_name": "bash-doc",
+      "comment": "",
+      "rpm_arch": "x86_64",
+      "variant": "Server",
+      "srpm_name": "bash",
+      "do_not_delete": false,
+      "release": 3,
+      "include": true,
+      "arch": "x86_64"
+    },
+    "model": "compose.overriderpm",
+    "pk": 1
+  },
+
   {
     "fields": {
       "name": "variant"
@@ -331,5 +216,130 @@
     },
     "model": "repository.contentcategory",
     "pk": 1
+  },
+
+  {
+    "fields": {
+      "compose_id": "compose-1",
+      "acceptance_testing": 1,
+      "compose_label": null,
+      "deleted": false,
+      "compose_respin": 0,
+      "compose_date": "2015-02-19",
+      "linked_releases": [
+        3,
+        2
+      ],
+      "compose_type": 1,
+      "release": 1,
+      "dt_imported": "2015-02-19T09:56:56.133Z"
+    },
+    "model": "compose.compose",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "compose_id": "compose-2",
+      "acceptance_testing": 1,
+      "compose_label": null,
+      "deleted": false,
+      "compose_respin": 0,
+      "compose_date": "2015-02-18",
+      "linked_releases": [
+        2
+      ],
+      "compose_type": 1,
+      "release": 1,
+      "dt_imported": "2015-02-19T09:58:33.646Z"
+    },
+    "model": "compose.compose",
+    "pk": 2
+  },
+
+  {
+    "fields": {
+      "variant_id": "Server",
+      "variant_uid": "Server",
+      "variant_type": 1,
+      "deleted": false,
+      "variant_name": "Server",
+      "compose": 1
+    },
+    "model": "compose.variant",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "variant_id": "Client",
+      "variant_uid": "Client",
+      "variant_type": 1,
+      "deleted": false,
+      "variant_name": "Client",
+      "compose": 1
+    },
+    "model": "compose.variant",
+    "pk": 2
+  },
+
+  {
+    "fields": {
+      "variant": 2,
+      "arch": 47,
+      "deleted": false
+    },
+    "model": "compose.variantarch",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "variant": 1,
+      "arch": 47,
+      "deleted": false
+    },
+    "model": "compose.variantarch",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "variant": 1,
+      "arch": 46,
+      "deleted": false
+    },
+    "model": "compose.variantarch",
+    "pk": 3
+  },
+
+  {
+    "fields": {
+      "content_category": 1,
+      "sigkey": null,
+      "rpm": 1,
+      "variant_arch": 3,
+      "path": 1
+    },
+    "model": "compose.composerpm",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "content_category": 1,
+      "sigkey": null,
+      "rpm": 1,
+      "variant_arch": 2,
+      "path": 2
+    },
+    "model": "compose.composerpm",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "content_category": 1,
+      "sigkey": null,
+      "rpm": 1,
+      "variant_arch": 1,
+      "path": 3
+    },
+    "model": "compose.composerpm",
+    "pk": 3
   }
 ]

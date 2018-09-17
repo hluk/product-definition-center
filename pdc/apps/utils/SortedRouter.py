@@ -54,7 +54,7 @@ class PDCRouter(bulk_operations.BulkRouter):
 
         class APIRoot(views.APIView):
             """
-            The REST APIs make it possible to programmatic access the data in Product Definition Center(a.k.a. PDC).
+            The REST APIs make it possible to programmatic access the data in PDC.
 
             Create new Product, import rpms and query components with contact informations, and more.
 
@@ -78,7 +78,7 @@ class PDCRouter(bulk_operations.BulkRouter):
                 ret = OrderedDict()
                 namespace = get_resolver_match(request).namespace
                 sorted_api_root_dict = OrderedDict(sorted(api_root_dict.items()))
-                for key, url_name in sorted_api_root_dict.items():
+                for key, url_name in list(sorted_api_root_dict.items()):
                     if namespace:
                         url_name = namespace + ':' + url_name
                     name = URL_ARG_RE.sub(r'{\1}', key)

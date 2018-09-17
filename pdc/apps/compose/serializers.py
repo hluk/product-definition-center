@@ -3,6 +3,8 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
+import six
+
 from rest_framework import serializers, fields
 from rest_framework.reverse import reverse
 
@@ -40,7 +42,7 @@ class LinkedReleasesField(serializers.SlugRelatedField):
         return StrictManyRelatedField(*args, child_relation=child_relation)
 
     def to_internal_value(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             raise serializers.ValidationError('Expected a string instead of <%s>.' % value)
         return super(LinkedReleasesField, self).to_internal_value(value)
 

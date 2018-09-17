@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -21,22 +21,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='releasecomponentsrpmnamemapping',
             name='release_component',
-            field=models.OneToOneField(related_name='srpmnamemapping', to='component.ReleaseComponent'),
+            field=models.OneToOneField(related_name='srpmnamemapping', to='component.ReleaseComponent', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='releasebugzillamapping',
             name='release',
-            field=models.OneToOneField(to='release.Release'),
+            field=models.OneToOneField(to='release.Release', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='releasebrewmapping',
             name='release',
-            field=models.OneToOneField(related_name='brew_mapping', to='release.Release'),
+            field=models.OneToOneField(related_name='brew_mapping', to='release.Release', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='brewtag',
             name='brew_mapping',
-            field=models.ForeignKey(related_name='allowed_tags', to='bindings.ReleaseBrewMapping'),
+            field=models.ForeignKey(related_name='allowed_tags', to='bindings.ReleaseBrewMapping', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='brewtag',

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rpm',
             name='built_for_release',
-            field=models.ForeignKey(blank=True, to='release.Release', null=True),
+            field=models.ForeignKey(blank=True, to='release.Release', null=True, on_delete=models.CASCADE),
         ),
     ]

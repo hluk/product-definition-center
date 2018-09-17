@@ -4,5 +4,5 @@
 # http://opensource.org/licenses/MIT
 #
 
-from settings import *  # noqa
+from .settings import *  # noqa
 INSTALLED_APPS = INSTALLED_APPS + ("django_extensions", )

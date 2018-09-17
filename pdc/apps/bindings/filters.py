@@ -12,8 +12,8 @@ def extend_release_filter(release_view):
     filter_class = release_view.filter_class
 
     class ExtendedReleaseFilter(filter_class):
-        bugzilla_product = NullableCharFilter(name='releasebugzillamapping__bugzilla_product')
-        dist_git_branch = NullableCharFilter(name='releasedistgitmapping__dist_git_branch')
+        bugzilla_product = NullableCharFilter(field_name='releasebugzillamapping__bugzilla_product')
+        dist_git_branch = NullableCharFilter(field_name='releasedistgitmapping__dist_git_branch')
 
         class Meta(filter_class.Meta):
             fields = filter_class.Meta.fields + ('bugzilla_product', 'dist_git_branch',)
@@ -25,7 +25,7 @@ def extend_release_component_filter(release_component_view):
     filter_class = release_component_view.filter_class
 
     class ExtendedReleaseComponentFilter(filter_class):
-        srpm_name = NullableCharFilter(name='srpmnamemapping__srpm_name')
+        srpm_name = NullableCharFilter(field_name='srpmnamemapping__srpm_name')
 
         class Meta(filter_class.Meta):
             fields = filter_class.Meta.fields + ('srpm_name',)

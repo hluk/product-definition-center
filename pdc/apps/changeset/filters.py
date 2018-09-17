@@ -30,13 +30,13 @@ def _filter_committed(qs, lookup_expr, value):
 
 
 class ChangesetFilterSet(django_filters.FilterSet):
-    author = MultiValueFilter(name='author__username', distinct=True)
-    resource = MultiValueFilter(name='change__target_class', distinct=True)
+    author = MultiValueFilter(field_name='author__username', distinct=True)
+    resource = MultiValueFilter(field_name='change__target_class', distinct=True)
     changed_since = django_filters.CharFilter(method='filter_committed_since',
                                               widget=widgets.DateTimeInput)
     changed_until = django_filters.CharFilter(method='filter_committed_until',
                                               widget=widgets.DateTimeInput)
-    comment = django_filters.CharFilter(name="comment", lookup_expr="contains")
+    comment = django_filters.CharFilter(field_name="comment", lookup_expr="contains")
 
     @value_is_not_empty
     def filter_committed_since(self, qs, name, value):

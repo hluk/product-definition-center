@@ -3,7 +3,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import absolute_import
+
 
 import fedmsg
 

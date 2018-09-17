@@ -10,9 +10,9 @@ from pdc.apps.component.models import GlobalComponent, ReleaseComponentType
 
 
 class ComponentBranch(models.Model):
-    global_component = models.ForeignKey(GlobalComponent)
+    global_component = models.ForeignKey(GlobalComponent, on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
-    type = models.ForeignKey(ReleaseComponentType)
+    type = models.ForeignKey(ReleaseComponentType, on_delete=models.CASCADE)
     # TODO: Should we include a the dist-git URL?
     # dist_git_url = models.CharField(max_length=500, blank=True)
     critical_path = models.BooleanField(default=False)
@@ -22,8 +22,8 @@ class ComponentBranch(models.Model):
             ('global_component', 'name', 'type'),
         ]
 
-    def __unicode__(self):
-        return u'{0}: {1} ({2})'.format(
+    def __str__(self):
+        return '{0}: {1} ({2})'.format(
             self.global_component.name, self.name, self.type)
 
     def export(self):
@@ -42,8 +42,8 @@ class SLA(models.Model):
     name = models.CharField(max_length=300, unique=True)
     description = models.TextField(blank=True)
 
-    def __unicode__(self):
-        return u'{0}'.format(self.name)
+    def __str__(self):
+        return '{0}'.format(self.name)
 
     def export(self):
         return {
@@ -63,8 +63,8 @@ class SLAToComponentBranch(models.Model):
             ('sla', 'branch'),
         ]
 
-    def __unicode__(self):
-        return u'{0} support for {1} {2} ({3})'.format(
+    def __str__(self):
+        return '{0} support for {1} {2} ({3})'.format(
             self.sla.name, self.branch.global_component.name, self.branch.name,
             self.branch.type.name)
 

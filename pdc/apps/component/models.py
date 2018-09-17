@@ -35,8 +35,8 @@ class Upstream(models.Model):
             ('homepage', 'scm_type', 'scm_url')
         ]
 
-    def __unicode__(self):
-        return u'%s' % self.homepage
+    def __str__(self):
+        return '%s' % self.homepage
 
     def export(self, fields=None):
         _fields = ['homepage', 'scm_type', 'scm_url'] if fields is None else fields
@@ -63,14 +63,14 @@ class BugzillaComponent(mptt_models.MPTTModel):
         parent_attr = 'parent_component'
         order_insertion_by = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_path_name(self):
         bugzilla_subcomponents = []
         for node in self.get_ancestors(include_self=True):
             bugzilla_subcomponents.append(node.name)
-        return u"%s" % "/".join(bugzilla_subcomponents)
+        return "%s" % "/".join(bugzilla_subcomponents)
 
     def get_subcomponents(self):
         path_name = self.get_path_name()
@@ -100,8 +100,8 @@ class GlobalComponent(models.Model):
     labels          = models.ManyToManyField(Label, blank=True)
     upstream        = models.OneToOneField(Upstream, blank=True, null=True, on_delete=models.CASCADE)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     @property
     def dist_git_web_url(self):
@@ -132,8 +132,8 @@ class ReleaseComponentType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     has_osbs = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
 
 class ReleaseComponent(models.Model):
@@ -155,8 +155,8 @@ class ReleaseComponent(models.Model):
             ("release", "name", "type"),
         ]
 
-    def __unicode__(self):
-        return u"%s %s" % (self.release, self.name)
+    def __str__(self):
+        return "%s %s" % (self.release, self.name)
 
     @property
     def dist_git_web_url(self):
@@ -212,8 +212,8 @@ class GroupType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=200, blank=True, null=True)
 
-    def __unicode__(self):
-        return u'%s' % self.name
+    def __str__(self):
+        return '%s' % self.name
 
     def export(self, fields=None):
         _fields = ['name', 'description'] if fields is None else fields
@@ -232,8 +232,8 @@ class ReleaseComponentGroup(models.Model):
     description = models.CharField(max_length=200)
     components = models.ManyToManyField(ReleaseComponent, related_name='release_component_groups', blank=True)
 
-    def __unicode__(self):
-        return u'%s-%s-%s' % (self.release.release_id, self.group_type.name, self.description)
+    def __str__(self):
+        return '%s-%s-%s' % (self.release.release_id, self.group_type.name, self.description)
 
     class Meta:
         unique_together = [
@@ -261,8 +261,8 @@ class ReleaseComponentGroup(models.Model):
 class ReleaseComponentRelationshipType(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self, fields=None):
         _fields = ['name'] if fields is None else fields
@@ -277,8 +277,8 @@ class ReleaseComponentRelationship(models.Model):
     from_component = models.ForeignKey(ReleaseComponent, related_name='from_release_components', on_delete=models.CASCADE)
     to_component = models.ForeignKey(ReleaseComponent, related_name='to_release_components', on_delete=models.CASCADE)
 
-    def __unicode__(self):
-        return u'%s %s %s' % (unicode(self.from_component), self.relation_type, unicode(self.to_component))
+    def __str__(self):
+        return '%s %s %s' % (str(self.from_component), self.relation_type, str(self.to_component))
 
     class Meta:
         unique_together = [
@@ -291,9 +291,9 @@ class ReleaseComponentRelationship(models.Model):
         if 'relation_type' in _fields:
             result['relation_type'] = self.relation_type.name
         if 'from_component' in _fields:
-            result['from_component'] = unicode(self.from_component)
+            result['from_component'] = str(self.from_component)
         if 'to_component' in _fields:
-            result['to_component'] = unicode(self.to_component)
+            result['to_component'] = str(self.to_component)
         return result
 
 

@@ -4,7 +4,6 @@
 # http://opensource.org/licenses/MIT
 #
 import json
-import types
 
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -646,7 +645,7 @@ class BugzillaComponentViewSet(viewsets.PDCModelViewSet):
         else:
             parent_pk = None
 
-        if type(parent_pk) not in (types.IntType, types.NoneType):
+        if type(parent_pk) not in (int, type(None)):
             return Response({'detail': 'Parent_pk is not typeof int or Nonetype.'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -677,7 +676,7 @@ class BugzillaComponentViewSet(viewsets.PDCModelViewSet):
         try:
             self.perform_update(serializer)
         except InvalidMove as err:
-            return Response({'detail': err.message}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': str(err)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -713,7 +712,7 @@ class BugzillaComponentViewSet(viewsets.PDCModelViewSet):
         name = data.get('name')
         parent_pk = data.get('parent_pk')
 
-        if type(parent_pk) not in (types.IntType, types.NoneType):
+        if type(parent_pk) not in (int, type(None)):
             return Response({'detail': 'Parent_pk is not typeof int or Nonetype.'},
                             status=status.HTTP_400_BAD_REQUEST)
         p_bc = None
@@ -772,7 +771,7 @@ class BugzillaComponentViewSet(viewsets.PDCModelViewSet):
         for descendant in instance.get_descendants():
             delete_obj_dict[descendant.id] = descendant.export()
         model_name = ContentType.objects.get_for_model(instance).model
-        for delete_obj_pk, delete_obj_desc in delete_obj_dict.iteritems():
+        for delete_obj_pk, delete_obj_desc in delete_obj_dict.items():
             self.request.changeset.add(model_name,
                                        delete_obj_pk,
                                        json.dumps(delete_obj_desc),
@@ -788,7 +787,7 @@ class BugzillaComponentViewSet(viewsets.PDCModelViewSet):
 
         super(BugzillaComponentViewSet, self).perform_destroy(instance)
 
-        for old_rc_pk in old_value_dict.keys():
+        for old_rc_pk in list(old_value_dict.keys()):
             m_rc = ReleaseComponent.objects.get(pk=old_rc_pk)
             new_value = m_rc.export()
             model_name = ContentType.objects.get_for_model(m_rc).model

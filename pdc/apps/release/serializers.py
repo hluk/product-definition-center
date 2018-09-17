@@ -30,8 +30,8 @@ def convert_push_targets_to_mask(data, instance, parent_key):
 
         allowed_push_targets = set(data.pop('allowed_push_targets'))
         available_push_targets = set(parent.allowed_push_targets.all()) if parent else set()
-        invalid_push_targets = [
-            push_target.name for push_target in allowed_push_targets - available_push_targets]
+        invalid_push_targets = ', '.join(
+            push_target.name for push_target in allowed_push_targets - available_push_targets)
         if invalid_push_targets:
             raise serializers.ValidationError(
                 {'detail': 'Push targets must be allowed in parent %s: %s' % (parent_key, invalid_push_targets)})
@@ -283,7 +283,7 @@ class ReleaseVariantSerializer(StrictSerializerMixin, serializers.ModelSerialize
                     del requested[variant.arch.name]
                 else:
                     variant.delete()
-            for arch in requested.values():
+            for arch in list(requested.values()):
                 arch.variant = instance
                 arch.save()
 

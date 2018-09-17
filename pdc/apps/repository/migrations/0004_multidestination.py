@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -18,9 +18,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('active', models.BooleanField(default=True)),
-                ('destination_repo', models.ForeignKey(related_name='destination_repo', to='repository.Repo')),
-                ('global_component', models.ForeignKey(to='component.GlobalComponent')),
-                ('origin_repo', models.ForeignKey(related_name='origin_repo', to='repository.Repo')),
+                ('destination_repo', models.ForeignKey(related_name='destination_repo', to='repository.Repo', on_delete=models.CASCADE)),
+                ('global_component', models.ForeignKey(to='component.GlobalComponent', on_delete=models.CASCADE)),
+                ('origin_repo', models.ForeignKey(related_name='origin_repo', to='repository.Repo', on_delete=models.CASCADE)),
                 ('subscribers', models.ManyToManyField(to='contact.Person', blank=True)),
             ],
             options={

@@ -50,8 +50,8 @@ class RPM(models.Model):
             ("name", "epoch", "version", "release", "arch"),
         )
 
-    def __unicode__(self):
-        return u"%s.rpm" % self.nevra
+    def __str__(self):
+        return "%s.rpm" % self.nevra
 
     def linked_composes(self):
         """Return a set of active composes that this RPM is linked"""
@@ -61,7 +61,7 @@ class RPM(models.Model):
 
     @property
     def nevra(self):
-        return u"%s-%s:%s-%s.%s" % (self.name, self.epoch, self.version, self.release, self.arch)
+        return "%s-%s:%s-%s.%s" % (self.name, self.epoch, self.version, self.release, self.arch)
 
     @staticmethod
     def check_srpm_nevra(srpm_nevra, arch):
@@ -142,10 +142,10 @@ class RPM(models.Model):
         """
         result = {}
         choices = dict(Dependency.DEPENDENCY_TYPE_CHOICES)
-        for type in choices.values():
+        for type in list(choices.values()):
             result[type] = []
         for dep in Dependency.objects.filter(rpm=self):
-            result[choices[dep.type]].append(unicode(dep))
+            result[choices[dep.type]].append(str(dep))
         return result
 
 
@@ -173,7 +173,7 @@ class Dependency(models.Model):
     comparison = models.CharField(max_length=50, blank=True, null=True)
     rpm = models.ForeignKey(RPM, on_delete=models.CASCADE)
 
-    def __unicode__(self):
+    def __str__(self):
         base_str = self.name
         if self.version:
             base_str += ' {comparison} {version}'.format(comparison=self.comparison,
@@ -200,8 +200,8 @@ class Dependency(models.Model):
 class ImageFormat(models.Model):
     name                = models.CharField(max_length=30, db_index=True, unique=True)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     CACHE = {}
 
@@ -214,8 +214,8 @@ class ImageFormat(models.Model):
 class ImageType(models.Model):
     name                = models.CharField(max_length=30, db_index=True, unique=True)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     CACHE = {}
 
@@ -252,8 +252,8 @@ class Image(models.Model):
             ("file_name", "sha256"),
         )
 
-    def __unicode__(self):
-        return u"%s" % self.file_name
+    def __str__(self):
+        return "%s" % self.file_name
 
     def composes(self):
         """Return a set of all composes that this image belongs to."""
@@ -272,8 +272,8 @@ class Archive(models.Model):
             ('build_nvr', 'name', 'md5'),
         )
 
-    def __unicode__(self):
-        return u"%s" % self.name
+    def __str__(self):
+        return "%s" % self.name
 
     def export(self, fields=None):
         _fields = ['build_nvr', 'name', 'size', 'md5'] if fields is None else fields
@@ -297,8 +297,8 @@ class BuildImage(models.Model):
             ("image_id", "image_format"),
         )
 
-    def __unicode__(self):
-        return u"%s-%s" % (self.image_id, self.image_format)
+    def __str__(self):
+        return "%s-%s" % (self.image_id, self.image_format)
 
     def export(self, fields=None):
         _fields = ['image_id', 'image_format', 'md5',
@@ -325,7 +325,7 @@ class BuildImage(models.Model):
 
 class ReleasedFiles(models.Model):
     file_primary_key = models.IntegerField(blank=False, default=0)
-    repo             = models.ForeignKey(Repo)
+    repo             = models.ForeignKey(Repo, on_delete=models.CASCADE)
     released_date    = models.DateField(blank=True, null=True)
     release_date     = models.DateField()
     created_at       = models.DateTimeField(default=timezone.now)
@@ -339,8 +339,8 @@ class ReleasedFiles(models.Model):
             ('file_primary_key', 'repo'),
         )
 
-    def __unicode__(self):
-        return u"%s" % self.build
+    def __str__(self):
+        return "%s" % self.build
 
     def export(self, fields=None):
         _fields = (set(['file_primary_key', 'repo',

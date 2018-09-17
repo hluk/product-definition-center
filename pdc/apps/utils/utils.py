@@ -10,7 +10,6 @@ from pdc.apps.common.constants import PDC_WARNING_HEADER_NAME
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models.fields.reverse_related import OneToOneRel
 from django.db.models.signals import pre_save
 from django.forms.models import model_to_dict
 from rest_framework.filters import OrderingFilter
@@ -95,10 +94,8 @@ class RelatedNestedOrderingFilter(OrderingFilter):
             field = model._meta.get_field(field_name)
 
             # Check if foreign key value exists
-            if isinstance(field, OneToOneRel):
+            if field.related_model and rest:
                 return self.is_valid_field(field.related_model, rest)
-            if field.rel and rest:
-                return self.is_valid_field(field.rel.to, rest)
             return True
         except FieldDoesNotExist:
             # There is no such field

@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -22,8 +22,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date', models.DateField(db_index=True)),
-                ('release', models.ForeignKey(to='release.Release')),
-                ('sla', models.ForeignKey(to='componentbranch.SLA')),
+                ('release', models.ForeignKey(to='release.Release', on_delete=models.CASCADE)),
+                ('sla', models.ForeignKey(to='componentbranch.SLA', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['date'],

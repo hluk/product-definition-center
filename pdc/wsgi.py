@@ -4,7 +4,7 @@
 # http://opensource.org/licenses/MIT
 #
 """
-WSGI config for pdc project.
+WSGI config for PDC project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

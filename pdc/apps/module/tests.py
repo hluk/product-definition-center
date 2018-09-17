@@ -4,7 +4,7 @@
 # Licensed under The MIT License (MIT)
 # http://opensource.org/licenses/MIT
 #
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.apps import apps
@@ -393,7 +393,7 @@ class ModuleAPITestCase(TestCaseWithChangeSetMixin, APITestCase):
                 {'stream': 'master', 'active': False}
             ],
         }
-        for expected, item_filters in filters.items():
+        for expected, item_filters in list(filters.items()):
             if expected == 'f27':
                 expected = expected_results_f27
             elif expected == 'master':

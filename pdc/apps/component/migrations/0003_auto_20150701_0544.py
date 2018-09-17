@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
 
@@ -26,8 +26,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('description', models.CharField(max_length=200)),
                 ('components', models.ManyToManyField(related_name='release_component_groups', to='component.ReleaseComponent', blank=True)),
-                ('group_type', models.ForeignKey(related_name='release_component_groups', to='component.GroupType')),
-                ('release', models.ForeignKey(related_name='release_component_groups', to='release.Release')),
+                ('group_type', models.ForeignKey(related_name='release_component_groups', to='component.GroupType', on_delete=models.CASCADE)),
+                ('release', models.ForeignKey(related_name='release_component_groups', to='release.Release', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(
